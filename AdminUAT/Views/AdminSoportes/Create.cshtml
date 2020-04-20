@@ -1,0 +1,32 @@
+﻿
+@{
+    Layout = null;
+}
+
+<form id="formSolicitudSoporte" class="container-fluid">
+    <div class="form-row">
+        <div class="form-group col-lg-5 col-md-8 col-sm-12 py-3">
+            <select class="form-control selectpicker" data-style="btn-primary" data-live-search="true" name="TipoSoporteId" id="tipoSoporteId">
+                <option value="0">- - SELECCÍÓN DE SOLICITUD - -</option>
+                @foreach (var item in ViewBag.TipoSoporte)
+                {
+                    <option value="@item.Id">@item.Nombre</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">            
+            <small class="text-danger" id="errorTipoSoporteId"></small>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="col-lg-10 col-md-12 col-sm-12">
+            <textarea class="form-control z-depth-1 text-monospace text-muted" rows="4" placeholder="Describe tu solicitud *" maxlength="4000" name="Solicitud" id="solicitud"></textarea>
+            <small class="text-danger" id="errorSolicitud"></small>
+        </div>
+        <div class="col-lg-2 col-md-12 col-sm-12">
+            <a class="btn blue-gradient text-center btn-block col-10" onclick="crearSoporte('@ViewBag.Ruta')">Enviar <i class="fas fa-paper-plane"></i></a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,112 @@
+﻿@model ICollection<AdminUAT.Models.ExtraModels.Agenda.AuxCita>
+
+@{
+    if (!(ViewBag._partial))
+    {
+        ViewData["Title"] = "Index";
+        Layout = "_LayoutMDB";
+    }
+    else
+    {
+        Layout = null;
+    }
+}
+
+<div id="recarga_body_citas">
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h4>Mis citas</h4>
+        </div>
+        <div class="col-lg-6 text-right">
+            <button class="btn btn-outline-blue btn-sm" data-toggle="modal" data-target="#modalLeftPartial" onclick="miHorario(@ViewBag.mpId, 'modal_body', '@ViewBag.ruta')">Mi horario</button>
+        </div>
+    </div>
+    <hr />
+    <partial name="_ModalLeftPartial" />
+
+    <p class="text-right text-muted font-italic"><span id="fecha"></span> <span id="hora"></span></p>
+
+    @if (Model.Count() == 0)
+    {
+        <div class="py-5 text-center text-muted">
+            <p><i class="far fa-calendar-check fa-2x"></i></p>
+            <p>No tienes citas pendientes</p>
+        </div>
+    }
+
+    @foreach (var item in Model)
+    {
+        <div class="text-center">
+            <b class="text-muted">@item.Dia @item.Fecha.ToString("dd/MM/yyyy")</b>
+        </div>
+
+        <hr class="w-50" />
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-11 col-sm-12">
+                <table class="table table-hover border border-primary z-depth-2 text-center">
+                    <thead class="blue-gradient text-white">
+                        <tr>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Denunciante</th>
+                            <th scope="col">Folio</th>
+                            <th>Código</th>
+                            <td>Asistencia</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var i in item.AuxHorario)
+                        {
+                            <tr>
+                                <td>@i.Hora hrs</td>
+                                <td>@i.Denunciante</td>
+                                <td><a class="text-primary" href="~/Denuncias?id=@i.IdDenuncia">@i.Folio</a></td>
+                                @{ var id_key = "key" + i.IdDenuncia; }
+                                <td>
+                                    @if (DateTime.Now > Convert.ToDateTime((item.Fecha.ToString("yyyy-MM-dd")) + " " + i.Hora))
+                                    {
+                                        <div id="@id_key">
+                                            <a id="@i.IdDenuncia" class="text-primary" onclick="getTokenAgenda(@i.IdDenuncia, '@ViewBag.ruta')"><i class="fas fa-key"></i></a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-lock"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if (DateTime.Now > Convert.ToDateTime((item.Fecha.ToString("yyyy-MM-dd")) + " " + i.Hora))
+                                    {
+                                        var id1 = i.IdDenuncia + 1; var id2 = i.IdDenuncia + 2; var nomRadio = "asistencia" + i.IdDenuncia;
+
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="@id1" name="@nomRadio" value="1">
+                                            <label class="custom-control-label" for="@id1">Si</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="@id2" name="@nomRadio" value="0">
+                                            <label class="custom-control-label" for="@id2">No</label>
+                                        </div>
+                                        <a class="text-default" onclick="addAsistencia('@nomRadio', @i.CitaId, '@ViewBag.ruta')"><i class="fas fa-paper-plane"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-lock"></i>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="py-3"></div>
+    }
+
+</div>
+
+
+<script>
+    fecha_actual();
+    reloj();
+</script>

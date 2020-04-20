@@ -1,0 +1,374 @@
+﻿@model AdminUAT.Models.Denuncias.Denuncia
+
+@{
+    Layout = null;
+    string sinE = "Sin Especificar";
+    var item = Model;
+    var mps = ViewBag.mps;
+}
+
+<div style="word-wrap: break-word;">
+
+
+    <div class="card-header text-monospace font-weight-bold text-center bg-blue-white">
+        Denuncia <a asp-area="" asp-controller="DescargaPDF" asp-action="GeneraPDF" asp-route-id="@item.Id"><i class="fas fa-download text-white"></i></a>
+        <h5>@item.Expediente</h5>
+    </div>
+
+    <div class="card-body text-dark">
+        <div class="row">
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                <h6 class="card-title">Folio:</h6>
+                <p class="card-text text-monospace text-muted">@item.Expediente</p>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <h6 class="card-title">Fecha y Hora Inicio:</h6>
+                <p class="card-text text-monospace text-muted">@item.AltaSistema</p>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <h6 class="card-title">Fecha y Hora Fin:</h6>
+                <p class="card-text text-monospace text-muted">@item.FinDenuncia</p>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                <h6 class="card-title">Kiosco:</h6>
+                <p class="card-text text-monospace text-muted">@item.BitaKiosco.Nombre</p>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12">
+                <h6 class="card-title">Estatus:</h6>
+                @if (item.SolucionId == null)
+                {<div class="spinner-grow text-warning" role="status"></div>}
+                else
+                { <div><i class="fas fa-circle text-success fa-lg"></i></div>}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6 class="card-title">MP Asignado:</h6>
+                @if (item.MP != null)
+                {<p class="card-text text-monospace text-muted">@item.MP.Nombre @item.MP.PrimerApellido @item.MP.SegundoApellido - @item.MP.UR.Nombre | @item.MP.UR.Region.Nombre</p> }
+            else
+            { <p class="card-text text-monospace text-danger">Por Asignar</p>}
+            </div>
+        </div>
+        <hr />
+
+        @if (item.SolucionId != null)
+        {
+            <div class="text-muted text-monospace font-weight-bold text-center">Atención a Denuncia</div>
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <h6 class="card-title">Respuesta</h6>
+                    <p class="card-text text-monospace text-muted">@item.Solucion.Nombre</p>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <h6 class="card-title">Fecha de solución</h6>
+                    <p class="card-text text-monospace text-muted">@item.FechaSolucion</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="card-title">Nota</h6>
+                    <p class="card-text text-monospace text-muted">@item.NotaSolucion</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="text-muted text-monospace font-weight-bold text-center">Reasignar MP a Denuncia</div>
+            <hr />
+            <form asp-action="ReasignarMP" asp-route-denunciaId="@item.Id" method="post">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <h6 class="card-title">MP</h6>
+                        <select name="mpId" class="form-control">
+                            <option></option>
+                            @foreach (var mp in mps)
+                            {
+                                <option value="@mp.Id">@mp.Nombre @mp.PrimerApellido @mp.SegundoApellido - @mp.UR.Nombre</option>
+                            }
+                        </select>
+                        <label class="control-label text-danger"><small>*Requerido</small></label>
+                    </div>
+                    <div class="col-lg-2 col-md-12 col-sm-12">
+                        <label class="control-label text-white">.</label>
+                        <button type="submit" class="btn btn-outline-dark form-control">Reasignar</button>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+
+    <div class="card-header text-monospace font-weight-bold text-center bg-blue-white"> <i class="fas fa-users"></i> Denunciante o Victima(s)</div>
+    @foreach (var victima in item.Victima)
+    {
+        <div class="card-body text-dark">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <h6 class="card-title">Nombre:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.Nombre @victima.PrimerApellido @victima.SegundoApellido</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Genero:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.Genero.Sexo</p>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    <h6 class="card-title">Correo Electronico:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.Email</p>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var dir in victima.DireccionVictima)
+                {
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">Estado:</h6>
+                        <p class="card-text text-monospace text-muted">
+                            @if (@dir.Colonia.Municipio.Estado != null)
+                            {@dir.Colonia.Municipio.Estado.Nombre}
+                        </p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">Municipio:</h6>
+                        <p class="card-text text-monospace text-muted">
+                            @if (@dir.Colonia.Municipio != null)
+                            {@dir.Colonia.Municipio.Nombre}
+                        </p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <h6 class="card-title">Colonia:</h6>
+                        <p class="card-text text-monospace text-muted">
+                            @if (@dir.Colonia != null)
+                            {@dir.Colonia.Nombre}
+                        </p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <h6 class="card-title">Calle:</h6>
+                        <p class="card-text text-monospace text-muted">@dir.Calle</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">CP:</h6>
+                        <p class="card-text text-monospace text-muted">
+                            @if (@dir.Colonia != null)
+                            {@dir.Colonia.CP}
+                        </p>
+                    </div>
+                }
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Nacimiento:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.FechaNacimiento.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Tel. Fijo:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.TelFijo</p>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <h6 class="card-title">Tel. Movil:</h6>
+                    <p class="card-text text-monospace text-muted">@victima.TelMovil</p>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12">
+                    <h6 class="card-title">¿Victima?</h6>
+                    @if (victima.EsVictima == true)
+                    {<i class="fas fa-check text-success"></i> }
+                    else
+                    { <i class="fas fa-times text-danger"></i>}
+
+                </div>
+            </div>
+
+            @if (victima.Abogado == true)
+            {
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">¿Abogado?</h6>
+                        @if (victima.Abogado == true)
+                        {<i class="fas fa-check text-success"></i> }
+                        else
+                        { <i class="fas fa-times text-danger"></i>}
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">Cedula:</h6>
+                        <p class="card-text text-monospace text-muted">@victima.Cedula</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">Despacho:</h6>
+                        <p class="card-text text-monospace text-muted">@victima.Despacho</p>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+    <div class="card-header text-monospace font-weight-bold text-center bg-blue-white"><i class="fas fa-map-marker-alt"></i> Detalles del evento</div>
+    <div class="card-body text-dark">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <h6 class="card-title">Fecha y Hora:</h6>
+                <p class="text-monospace text-muted">@item.FechaEvento</p>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <h6 class="card-title">Delito:</h6>
+                <p class="text-monospace text-muted">
+                    @if (item.Delito != null)
+                    {@item.Delito.Tipo }
+                else
+                { @sinE}
+                </p>
+            </div>
+            @if (item.NumTestigo != null)
+            {
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">No. de testigos:</h6>
+                    <p class="text-monospace text-muted">@item.NumTestigo</p>
+                </div>
+            }
+            @if (item.NumTestigo != null)
+            {
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">No. de Emergencia:</h6>
+                    <p class="text-monospace text-muted">@item.NumTestigo</p>
+                </div>
+            }
+            @if (item.Danio != null)
+            {
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Daño:</h6>
+                    <p class="text-monospace text-muted">@item.Danio.Tipo</p>
+                </div>
+            }
+        </div>
+        <div class="row">
+            @foreach (var lugar in item.DireccionDenuncia)
+            {
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Estado:</h6>
+                    <p class="text-monospace text-muted">@lugar.Colonia.Municipio.Estado.Nombre</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Municipio:</h6>
+                    <p class="text-monospace text-muted">@lugar.Colonia.Municipio.Nombre</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Colonia:</h6>
+                    <p class="text-monospace text-muted">@lugar.Colonia.Nombre</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">Calle:</h6>
+                    <p class="text-monospace text-muted">@lugar.Calle</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">No. Exterior:</h6>
+                    <p class="text-monospace text-muted">@lugar.NumExterior</p>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-12">
+                    <h6 class="card-title">No. Interior:</h6>
+                    <p class="text-monospace text-muted">@lugar.NumInterior</p>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6 class="card-title">Relato:</h6>
+                @if (@item.Relato != "")
+                {<p class="card-text text-monospace text-muted boxScroll">@item.Relato</p>}
+            </div>
+        </div>
+    </div>
+
+    <div class="card-header text-monospace font-weight-bold text-center bg-blue-white"><i class="fas fa-users"></i> Probable Responsable(s)</div>
+    <div class="card-body text-dark">
+        <div class="row">
+            @if (item.Responsable.Count() > 0)
+            {
+                @foreach (var responsable in item.Responsable)
+                {
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <h6 class="card-title">Nombre:</h6>
+                        <p class="text-monospace text-muted">@responsable.Nombre @responsable.PrimerApellido @responsable.SegundoApellido</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-12">
+                        <h6 class="card-title">Genero:</h6>
+                        <p class="text-monospace text-muted">@responsable.Genero.Sexo</p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <h6 class="card-title">Fecha Nacimiento:</h6>
+                        <p class="text-monospace text-muted">@responsable.FechaNacimiento</p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <h6 class="card-title">Alias:</h6>
+                        <p class="text-monospace text-muted">@responsable.Alias</p>
+                    </div>
+                    @foreach (var dirImputado in responsable.DireccionResponsable)
+                    {
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Estado:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.Colonia.Municipio.Estado.Nombre</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Municipio:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.Colonia.Municipio.Nombre</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Colonia:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.Colonia.Nombre</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Calle:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.Calle</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">No. Exterior:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.NumExterior</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">No. Interior:</h6>
+                            <p class="text-monospace text-muted">@dirImputado.NumInterior</p>
+                        </div>
+                    }
+
+                    @foreach (var desc in responsable.DescResponsable)
+                    {
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Color de Piel:</h6>
+                            <p class="text-monospace text-muted">@desc.ColorPiel</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Altura:</h6>
+                            <p class="text-monospace text-muted">@desc.Altura</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Tipo cabello:</h6>
+                            <p class="text-monospace text-muted">@desc.TipoCabello</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Color cabello:</h6>
+                            <p class="text-monospace text-muted">@desc.ColorCabello</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Color ojos:</h6>
+                            <p class="text-monospace text-muted">@desc.ColorOjos</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Complexión:</h6>
+                            <p class="text-monospace text-muted">@desc.Complexion</p>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-12">
+                            <h6 class="card-title">Tatuajes:</h6>
+                            <p class="text-monospace text-muted">@desc.Tatuajes</p>
+                        </div>
+                    }
+
+                }
+            }
+            else
+            {
+                <p class="text-monospace text-muted">Sin especificar</p>
+            }
+        </div>
+    </div>
+
+
+</div>

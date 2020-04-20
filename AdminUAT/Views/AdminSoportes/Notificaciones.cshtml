@@ -1,0 +1,36 @@
+﻿@model ICollection<AdminUAT.Models.AdminUat.SeguimientoSoporte>
+@{
+    Layout = null;
+}
+
+<div class="container-fluid my-scroll" id="bodyNotificaciones">
+    @foreach (var item in Model)
+    {
+        if (item.Usuario == ViewBag.yo)
+        {
+            <div class="row justify-content-end py-3">
+                <div class="card col-lg-10 col-md-11 col-sm-12 z-depth-2">
+                    <div class="card-header bg-primary text-white">
+                        <small class="pull-right"><i class="far fa-user"></i> @ViewBag.miNombre [ <i class="far fa-clock"></i> @item.AltaSistema ]</small>
+                    </div>
+                    <div class="card-body">
+                        <small class="font-italic text-muted">@item.Comentario</small>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row py-3">
+                <div class="card col-lg-10 col-md-11 col-sm-12 z-depth-2">
+                    <div class="card-header peach-gradient">
+                        <small class="pull-right"> <i class="far fa-user"></i> @ViewBag.nombreDos [ <i class="far fa-clock"></i> @item.AltaSistema ]</small>
+                    </div>
+                    <div class="card-body">
+                        <small class="font-italic text-muted">@item.Comentario</small>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

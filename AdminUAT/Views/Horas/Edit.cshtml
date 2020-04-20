@@ -1,0 +1,47 @@
+﻿@model AdminUAT.Models.AgendaUAT.Hora
+
+@{
+    ViewData["Title"] = "Editar";
+    Layout = "_LayoutMDB";
+}
+
+<h4>Editar Hora</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="CampoHora" class="control-label"></label>
+                <div class="input-group mb-2 clockpicker">
+                    <input asp-for="CampoHora" class="form-control">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="far fa-clock"></i></div>
+                    </div>
+                </div>
+                <span asp-validation-for="CampoHora" class="text-danger"></span>
+            </div>
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="customSwitches" asp-for="Activo">
+                <label class="custom-control-label" for="customSwitches">Activo</label>
+            </div>
+            <div class="form-group py-3">
+                <input type="submit" value="Guardar cambios" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Regresar</a>
+</div>
+
+
+<script type="text/javascript">
+    $('.clockpicker').clockpicker({
+        autoclose: 'true'
+    });
+</script>

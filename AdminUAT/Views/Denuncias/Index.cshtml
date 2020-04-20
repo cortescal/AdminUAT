@@ -1,0 +1,206 @@
+﻿@model IEnumerable<AdminUAT.Models.Denuncias.Denuncia>
+
+@{
+    ViewData["Title"] = "Denuncias";
+    string sinE = "Sin Especificar";
+    Layout = "_LayoutMDB";
+}
+
+<div class="d-flex bd-highlight mb-2">
+    <div class="mr-auto p-2 bd-highlight">
+        <h4 class="text-muted">
+            Denuncias UAT@@
+        </h4>
+    </div>
+    @if (User.IsInRole("AEI") || User.IsInRole("Root"))
+    {
+        <div class="bd-highlight">
+            <a class="btn btn-outline-black btn-sm" asp-action="Index" asp-route-fecha="@ViewBag.fecha" asp-route-opc="@ViewBag.opc" title="Denuncias inconclusas">
+                <i class="fas fa-exchange-alt"></i>
+            </a>
+        </div>
+    }
+</div>
+<hr />
+
+<form method="get" asp-controller="Denuncias" asp-action="Index">
+    @if (User.IsInRole("MP"))
+    {
+        <input name="opc" value="@ViewBag.opc" hidden />
+    }
+    <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <input name="fecha" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-2 col-md-6 col-sm-12">
+            <input name="id" class="form-control" placeholder="Número" />
+        </div>
+        @if (!User.IsInRole("MP"))
+        {
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <input name="palabra" class="form-control" placeholder="palabra" />
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <select name="kiosco" class="form-control">
+                    <option> - - Selecciona un kiosco - -</option>
+                    @foreach (var item in ViewBag.kioscos)
+                    {
+                        <option value="@item.Id">@item.Nombre</option>
+                    }
+                </select>
+            </div>
+        }
+        <div class="col-lg-1 col-md-6 col-sm-12">
+            <button type="submit" class="btn btn-primary btn-sm btn-block"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+</form>
+<br />
+
+<table class="table table-hover text-center z-depth-2">
+    <thead class="blue-gradient text-white">
+        <tr>
+            <th colspan="10" class="text-monospace">
+                <h6>@ViewBag.titulo</h6>
+                Total @ViewBag.total
+            </th>
+        </tr>
+        <tr>
+            <th scope="col">#</th>
+            @if (User.IsInRole("Root") || User.IsInRole("AEI"))
+            {
+                @if (!ViewBag.opc)
+                {
+                    <th scope="col">Folio</th>
+                }
+            }
+            else
+            {
+                <th scope="col">Folio</th>
+            }
+            <th scope="col">Inicio</th>
+            <th scope="col">Kiosco</th>
+            <th scope="col">Delito</th>
+            @if (User.IsInRole("Root") || User.IsInRole("AEI"))
+            {
+                <th>Paso</th>
+                if (!ViewBag.opc)
+                {
+                    <th scope="col">Estatus</th>
+                    <th scope="col"></th>
+                }
+            }
+            else
+            {
+                <th scope="col">Estatus</th>
+                <th scope="col"></th>
+            }
+            @if (User.IsInRole("Root"))
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            @foreach (var item in Model)
+            {
+        <tr>
+            <td>@item.Id</td>
+            @if (item.Paso == 3)
+            {
+                <td>@item.Expediente</td>
+            }
+
+            <td>@item.AltaSistema</td>
+            <td>@item.BitaKiosco.Nombre</td>
+            @if (item.Delito != null)
+            {
+                <td>@item.Delito.Tipo</td>
+            }
+            else
+            {
+                <td>@sinE</td>
+            }
+
+            @if (User.IsInRole("AEI") || User.IsInRole("Root"))
+            {
+                if (item.Paso == 3)
+                {
+                    <th class="text-success font-weight-bold">@item.Paso</th>
+                }
+                else
+                {
+                    <th class="text-danger font-weight-bold">@item.Paso</th>
+                }
+            }
+
+            @if (item.Paso == 3)
+            {
+                @if (item.SolucionId == null)
+                {
+                    <td><i class="fa fa-circle text-warning"></i></td>
+                }
+                else
+                {
+                    <td><i class="fa fa-circle text-success"></i></td>
+                }
+
+                <td><a class="text-primary" asp-action="" data-toggle="modal" data-target=".bd-example-modal-xl" onclick="detailsDenuncia('@item.Id','Denuncias/Details')" title="Detalles"><i class="fas fa-info-circle"></i></a></td>
+            }
+
+            @if (User.IsInRole("Root") && item.SolucionId == null && item.Paso == 3)
+            {
+                <td>
+                    <a data-toggle="modal" data-target="#modalClasico" title="liberar código"  onclick="alertaConfirmacion('@ViewBag.ruta/Root/ConfirmaLiberarCodigo', @item.Id)">
+                        <i class="fas fa-key text-secondary"></i>
+                    </a>
+                </td>
+            }
+        </tr>
+            }
+        }
+        else
+        {
+            if (ViewBag.alerta)
+            {               
+                <tr>
+                    <td colspan="7" class="text-muted">
+                        <p><i class="far fa-file-alt fa-2x"></i></p>
+                        <b>Sin denuncias</b>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-danger">
+                        <p><i class="fas fa-ban fa-2x"></i></p>
+                        <b>Sin acceso a la denuncia solicitada</b>
+                    </td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+
+
+<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detalles">
+                <!--vista parcial-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<partial name="_Modal" />

@@ -1,0 +1,71 @@
+﻿@model AdminUAT.Models.AgendaUAT.ViewModelAgenda.Horarios
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_LayoutMDB";
+    var mps = ViewBag.mps;
+}
+
+<h4>Horario de Ministerio Público</h4>
+<hr />
+
+<form method="get" asp-controller="HoraDias">
+    <div class="row">
+        <select class="selectpicker col-lg-5 col-md-6 col-sm-12" name="mpId" data-live-search="true" data-style="btn-primary" onchange="mostrarHorarioMP()">
+            <option value=""></option>
+            @foreach (var item in mps)
+            {
+                <option data-subtext="@item.Activo - @item.Id" value="@item.Id">@item.Nombre @item.PrimerApellido @item.SegundoApellido</option>
+            }
+        </select>
+    </div>
+    <button id="btn_form" type="submit" hidden></button>
+</form>
+<br />
+
+
+<div class="text-center text-muted">
+    @if (ViewBag.letrero == 0 || ViewBag.letrero == 1)
+    {
+        if (ViewBag.letrero == 1)
+        {
+            <p><i class="far fa-clock fa-2x"></i></p>
+        }
+
+        if (@ViewBag.mp.Activo)
+        {
+            <p class="text-success font-weight-bolder">
+                @ViewBag.mp.Nombre  @ViewBag.mp.PrimerApellido @ViewBag.mp.SegundoApellido
+            </p>
+        }
+        else
+        {
+            <p class="text-danger font-weight-bolder">
+                @ViewBag.mp.Nombre  @ViewBag.mp.PrimerApellido @ViewBag.mp.SegundoApellido
+            </p>
+        }
+
+        if (ViewBag.letrero == 1)
+        {
+            <p>No cuenta con horario registrado</p>
+        }
+    }
+    else if (ViewBag.letrero == 2)
+    {
+        <div class="py-4"></div>
+        <p><i class="far fa-user fa-2x"></i></p>
+        <p>El id del Ministerio Público que solicito no existe.</p>
+    }
+</div>
+
+@*if (ViewBag.letrero == 0 || ViewBag.letrero == 1)
+{
+    <div class="row justify-content-center">
+        <button class="btn btn-outline-blue btn-sm" data-toggle="modal" data-target="#modalTopLeftPartial" onclick="viewAddHorario(@ViewBag.mp.Id)">
+            Agergar Horario
+        </button>
+    </div>
+    <partial name="_ModalTopLeftPartial" />
+}*@
+
+@await Html.PartialAsync("../HoraDias/PartialViews/ViewHorary.cshtml"); 

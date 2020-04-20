@@ -1,0 +1,10 @@
+﻿@model long
+@{
+    Layout = null;
+}
+
+<div class="text-center">
+    <p class="font-italic">¿Esta seguro que desea cambiar a <b>Atendido</b> este folio <span class="text-danger text-monospace" id="folio"></span> ?</p>
+    <a class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</a>
+    <a class="btn btn-primary btn-sm" asp-controller="AdminSoportes" asp-action="SoporteAtendido" asp-route-id="@Model">Confirmar</a>
+</div>

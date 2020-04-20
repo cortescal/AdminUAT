@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewData["Title"] = "Reporte";
+    var denuncias = ViewBag.denuncias;
+    var mp = ViewBag.mp;
+    int total = 0;
+}
+
+<div class="row">
+    <div class="col-12 text-center">
+        <h4 class="text-muted">
+            Reporte
+        </h4>
+    </div>
+</div>
+<hr />
+
+<form method="post" asp-area="" asp-controller="Root" asp-action="Index">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <input name="fecha" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <input name="fecha2" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            <button type="submit" class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+</form>
+<br />
+
+<ul class="nav nav-tabs my-3">
+    <li class="nav-item">
+        <a class="nav-link active" onclick="submenu(1)" id="opc1">Recibidas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" onclick="submenu(2)" id="opc2">General</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  onclick="submenu(3)" id="opc3">MP</a>
+    </li>
+</ul>
+
+
+        <div id="denuncias">
+            <div class="card-header text-monospace font-weight-bold text-center bg-blue-white"><i class="fas fa-file-alt"></i> Total @ViewBag.total </div>
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr class="bg-blue-white">
+                        <th scope="col">#</th>
+                        <th scope="col">Folio</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Origen</th>
+                        <th scope="col">Delito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in denuncias)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Expediente</td>
+                            <td>@item.AltaSistema</td>
+                            <td>@item.BitaKiosco.Nombre</td>
+                            @if (item.Delito == null)
+                            {
+                                <td>NO ESPECIFICADO</td>
+                            }
+                            else
+                            {
+                                <td>@item.Delito.Tipo</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div id="global">
+            <div class="card-header text-monospace font-weight-bold text-center bg-blue-white"><i class="fas fa-file-alt"></i> Total @ViewBag.total</div>
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr class="bg-blue-white">
+                        <th>Kiosco</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.TotalKiosco)
+                    {
+                        <tr>
+                            <td>@item.Nombre</td>
+                            <td>@item.Total</td>
+                        </tr>
+                        { total += item.Total; }
+                    }
+                    <tr>
+                        <td>Total</td>
+                        <td>@total</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="mps">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr class="bg-blue-white">
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Recibidas</th>
+                        <th scope="col">Atendidas</th>
+                        <th scope="col">Por atender</th>
+                        <th scope="col">UR</th>
+                        <th scope="col">Región</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in mp)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Nombre @item.PrimerApellido @item.SegundoApellido</td>
+                            <td>@item.Stock</td>
+                            <td>@item.Denuncia.Count</td>
+                            <td>@(item.Stock - item.Denuncia.Count)</td>
+                            <td>@item.UR.Nombre</td>
+                            <td>@item.UR.Region.Nombre</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+<script>
+    submenu(1);
+    function submenu(opc) {
+        if (opc == 1) {
+            $('#opc1').addClass('active text-primary');
+            $('#opc2').removeClass('active text-primary');
+            $('#opc3').removeClass('active text-primary');
+
+            document.getElementById('denuncias').style.display = 'block';
+            document.getElementById('global').style.display = 'none';
+            document.getElementById('mps').style.display = 'none';
+        } else if (opc == 2) {          
+            $('#opc1').removeClass('active text-primary');
+            $('#opc2').addClass('active text-primary');
+            $('#opc3').removeClass('active text-primary');
+
+            document.getElementById('denuncias').style.display = 'none';
+            document.getElementById('global').style.display = 'block';
+            document.getElementById('mps').style.display = 'none';
+        } else {
+            $('#opc1').removeClass('active text-primary');
+            $('#opc2').removeClass('active text-primary');
+            $('#opc3').addClass('active text-primary');
+
+            document.getElementById('denuncias').style.display = 'none';
+            document.getElementById('global').style.display = 'none';
+            document.getElementById('mps').style.display = 'block';
+        }
+    }
+</script>

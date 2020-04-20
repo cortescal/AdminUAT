@@ -1,0 +1,109 @@
+﻿@model AdminUAT.Models.Denuncias.Denuncia
+
+@{
+    ViewData["Title"] = "Auxiliar";
+}
+
+<h3 class="text-muted text-center"><i class="fas fa-tools"></i> Denuncias</h3>
+
+<form method="get" asp-area="" asp-controller="Auxiliar" asp-action="Index">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <input name="id" class="form-control" placeholder="numero" />
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            <button type="submit" class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+</form>
+<br />
+
+@if (ViewBag.alerta != null)
+{
+    <diV class="row">
+        <div class="col-12 alert alert-danger text-center">
+            @ViewBag.alerta
+        </div>
+    </diV>
+}
+
+@if (Model != null)
+{
+<div style="word-wrap: break-word;">
+
+    <div class="card-header text-monospace font-weight-bold text-center bg-blue-white">
+        Denuncia
+        <h6>@Model.Expediente</h6>
+    </div>
+
+    <div class="card-body text-dark">
+        <div class="row text-center">
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <h6 class="card-title">Folio:</h6>
+                <p class="card-text text-monospace text-muted">@Model.Expediente</p>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <h6 class="card-title">Fecha y Hora Inicio:</h6>
+                <p class="card-text text-monospace text-muted">@Model.AltaSistema</p>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <h6 class="card-title">Estatus:</h6>
+                @if (Model.SolucionId == null)
+                {<div class="spinner-grow text-warning" role="status"></div>}
+                else
+                { <div><i class="fas fa-circle text-success fa-lg"></i></div>}
+            </div>
+        </div>
+        <hr />
+
+        @if (Model.SolucionId == null)
+        {
+            <div class="text-muted text-monospace font-weight-bold text-center bg-light">Atención a Denuncia</div>
+            <hr />
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <h6 class="card-title">Respuesta</h6>
+                        <select name="SolucionId" class="form-control" asp-items="ViewBag.SolucionId">
+                            <option></option>
+                        </select>
+                        <label class="control-label text-danger"><small>*Requerido</small></label>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <h6 class="card-title">Nota</h6>
+                        <textarea class="form-control" name="NotaSolucion" maxlength="3000"></textarea>
+                        <label class="control-label text-danger"><small>*Requerido</small></label>
+                    </div>
+                    <div class="col-lg-2 col-md-12 col-sm-12">
+                        <label class="control-label text-muted">Finalizar</label>
+                        <button type="submit" class="btn btn-outline-dark form-control">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="text-muted text-monospace font-weight-bold text-center  bg-light">Atención a Denuncia</div>
+            <hr />
+
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <h6 class="card-title">Respuesta</h6>
+                    <p class="card-text text-monospace text-muted">@Model.Solucion.Nombre</p>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <h6 class="card-title">Fecha de solución</h6>
+                    <p class="card-text text-monospace text-muted">@Model.FechaSolucion</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="card-title">Nota</h6>
+                    <p class="card-text text-monospace text-muted">@Model.NotaSolucion</p>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+}

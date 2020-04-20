@@ -1,0 +1,63 @@
+﻿@model AdminUAT.Models.MinisterioPublico.MP
+
+@{
+    Layout = null;
+}
+
+<div style="word-wrap: break-word;">
+
+    <div class="row form-group text-center">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <label class="text-monospace">Id: @Model.Id</label>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <label class="text-monospace">Nombre: @Model.Nombre @Model.PrimerApellido @Model.SegundoApellido</label>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <label class="text-monospace">Activo: @Model.Activo</label>
+        </div>
+    </div>
+    <hr />
+    <div class="row form-group text-center">
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <label class="text-monospace">Stock: @Model.Stock</label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <label class="text-monospace">Atendidas: @Model.Resuelto</label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <label class="text-monospace">En espera: @(Model.Stock - Model.Resuelto)</label>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="text-center col-lg-6 col-md-6 col-sm-12">
+            <label class="text-monospace">Región: @Model.UR.Region.Nombre</label>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <label class="text-monospace">UR: </label>
+            <select class="selectpicker" data-live-search="true" id="URId" onchange="cambiarUr(@Model.Id)">
+                @foreach (var item in ViewBag.Urs)
+                {
+                    if (item.Id == Model.URId)
+                    {
+                        <option value="@item.Id" selected>@item.Nombre</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.Nombre</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</div>
+<div class="text-center text-muted" id="msjUrOk">
+
+</div>
+
+<script>
+    $(
+        $('select').selectpicker()
+    );    
+</script>

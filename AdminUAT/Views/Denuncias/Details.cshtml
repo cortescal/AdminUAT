@@ -1,0 +1,454 @@
+﻿@model AdminUAT.Models.Denuncias.Denuncia
+
+@{
+    Layout = null;
+    string sinE = "No especificado";
+    var item = Model;
+}
+
+<div style="word-wrap: break-word;">
+
+    <div class="card mb-3">
+        <div class="card-header blue-gradient text-white text-center">
+            Denuncia @item.Expediente
+            <a class="text-white px-3" asp-area="" asp-controller="DescargaPDF" asp-action="GeneraPDF" asp-route-id="@item.Id"><i class="fas fa-download"></i></a>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-lg-4 col-md-12 col-sm-12">
+                    <label class="font-italic">Folio:</label>
+                    <p class="card-text text-monospace text-muted">@item.Expediente</p>
+                </div>
+                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                    <label class="font-italic">Fecha y Hora Inicio:</label>
+                    <p class="card-text text-monospace text-muted">@item.AltaSistema</p>
+                </div>
+                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                    <label class="font-italic">Fecha y Hora Fin:</label>
+                    <p class="card-text text-monospace text-muted">@item.FinDenuncia</p>
+                </div>
+                <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                    <h6 class="font-italic">Estatus:</h6>
+                    @if (item.SolucionId == null)
+                    {<div class="spinner-grow text-warning" role="status"></div>}
+                    else
+                    { <div><i class="fas fa-circle text-success fa-lg"></i></div>}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-lg-9 col-md-12 col-sm-12">
+                    <label class="font-italic">Ministerio Público:</label>
+                    @if (item.MP != null)
+                    {<p class="card-text text-monospace text-muted">@item.MP.Nombre @item.MP.PrimerApellido @item.MP.SegundoApellido - @item.MP.UR.Nombre | @item.MP.UR.Region.Nombre</p> }
+                else
+                { <p class="card-text text-monospace text-danger">Por Asignar</p>}
+                </div>
+                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                    <label class="font-italic">Kiosco:</label>
+                    <p class="card-text text-monospace text-muted">@item.BitaKiosco.Nombre</p>
+                </div>
+            </div>
+
+            <!--Comentario MP-->
+            @if (item.SolucionId == null)
+            {
+                if (User.IsInRole("MP") || User.IsInRole("Root"))
+                {
+                    <hr />
+                    <div class="row text-right">
+                        <div class="col-7">
+                            <div class="text-muted text-monospace font-weight-bold">Atención a Denuncia</div>
+                        </div>
+                        <div class="col-5" id="btnMail">
+                            <button class="btn btn-outline-success btn-sm" onclick="SendMailToken(@item.Id)">Enviar código</button>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="msjToken">
+
+                    </div>
+                    <div id="bodyForm">
+                        <form method="post" id="formData">
+                            <div class="form-row">
+                                <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                    <input class="form-control font-italic" name="codigo" maxlength="4" placeholder="Código" required>
+                                </div>
+                                <div class="form-group col-lg-4 col-md-12 col-sm-12">
+                                    <select name="SolucionId" class="form-control font-italic" asp-items="ViewBag.SolucionId" required>
+                                        <option>-- Atención --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-4 col-md-12 col-sm-12">
+                                    <textarea class="form-control font-italic" name="NotaSolucion" maxlength="3000" placeholder="Comentario..." required></textarea>
+                                </div>
+                                <div class="col-lg-2 col-md-12 col-sm-12">
+                                    <button type="button" class="btn btn-outline-dark btn-block" onclick="AddComentario('Denuncias/Edit/@item.Id')">Enviar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <hr />
+                <div class="text-muted text-monospace font-weight-bold text-center">Atención a Denuncia</div>
+                <hr />
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6 col-md-12 col-sm-12">
+                        <label class="font-italic">Respuesta</label>
+                        <p class="card-text text-monospace text-muted">@item.Solucion.Nombre</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-12 col-sm-12">
+                        <label class="font-italic">Fecha de solución</label>
+                        <p class="card-text text-monospace text-muted">@item.FechaSolucion</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="font-italic">Nota</label>
+                        <p class="card-text text-monospace text-muted">@item.NotaSolucion</p>
+                    </div>
+                </div>
+            }
+
+            <!--Comentario AEI-->
+            @if (item.NotaAEI != null)
+            {
+                <hr />
+                <div class="text-muted text-monospace font-weight-bold text-center">Comentario a Denuncia por AEI</div>
+                <hr />
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="font-italic">Nota</label>
+                        <p class="card-text text-monospace text-muted">@item.NotaAEI</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @if (User.IsInRole("AEI") || User.IsInRole("Root"))
+                {
+                    <hr />
+                    <div class="text-muted text-monospace font-weight-bold text-center">Comentario a Denuncia por AEI</div>
+                    <hr />
+
+                    <form asp-controller="AEIDenuncias" asp-action="Edit" asp-route-id="@item.Id" method="post">
+                        <div class="row">
+                            <div class="col-lg-10 col-md-12 col-sm-12">
+                                <textarea class="form-control font-italic" name="NotaAEI" maxlength="3000" placeholder="Comentario..."></textarea>
+                                <label class="control-label text-danger"><small>*Requerido</small></label>
+                            </div>
+                            <div class="col-lg-2 col-md-12 col-sm-12">
+                                <button type="submit" class="btn btn-outline-dark btn-block">Enviar</button>
+                            </div>
+                        </div>
+                    </form>
+                }
+            }
+
+        </div>
+        </div>
+    </div>
+
+<!--Denunciante o victima-->
+    <div class="card mb-3">
+        <div class="card-header blue-gradient text-white text-center">
+            <i class="fas fa-users"></i> Denunciante o Victima(s)
+        </div>
+        <div class="card-body">
+            @foreach (var victima in item.Victima)
+            {
+            <div class="form-row">
+                <div class="form-group col-lg-4 col-md-12 col-sm-12">
+                    <label class="font-italic">Nombre:</label>
+                    <p class="card-text text-monospace text-muted">@victima.Nombre @victima.PrimerApellido @victima.SegundoApellido</p>
+                </div>
+                <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                    <label class="font-italic">Genero:</label>
+                    <p class="card-text text-monospace text-muted">@victima.Genero.Sexo</p>
+                </div>
+                @if (victima.Email != "")
+                {
+                    <div class="form-group col-lg-5 col-md-12 col-sm-12">
+                        <label class="font-italic">Correo Electronico:</label>
+                        <p class="card-text text-monospace text-muted">@victima.Email</p>
+                    </div>
+                }
+            </div>
+                <div class="form-row">
+                    @foreach (var dir in victima.DireccionVictima)
+                    {
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">Estado:</label>
+                            <p class="card-text text-monospace text-muted">
+                                @if (@dir.Colonia.Municipio.Estado != null)
+                                {@dir.Colonia.Municipio.Estado.Nombre}
+                            </p>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">Municipio:</label>
+                            <p class="card-text text-monospace text-muted">
+                                @if (@dir.Colonia.Municipio != null)
+                                {@dir.Colonia.Municipio.Nombre}
+                            </p>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                            <label class="font-italic">Colonia:</label>
+                            <p class="card-text text-monospace text-muted">
+                                @if (@dir.Colonia != null)
+                                {@dir.Colonia.Nombre}
+                            </p>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                            <label class="font-italic">Calle:</label>
+                            <p class="card-text text-monospace text-muted">@dir.Calle</p>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">CP:</label>
+                            <p class="card-text text-monospace text-muted">
+                                @if (@dir.Colonia != null)
+                                {@dir.Colonia.CP}
+                            </p>
+                        </div>
+                    }
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Nacimiento:</label>
+                        <p class="card-text text-monospace text-muted">@victima.FechaNacimiento.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Tel. Fijo:</label>
+                        <p class="card-text text-monospace text-muted">
+                            @if (victima.TelFijo == "")
+                            {@sinE }
+                        else
+                        { @victima.TelFijo}
+                        </p>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                        <label class="font-italic">Tel. Movil:</label>
+                        <p class="card-text text-monospace text-muted">@victima.TelMovil</p>
+                    </div>
+                    <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                        <label class="font-italic">¿Victima?</label>
+                        @if (victima.EsVictima == true)
+                        {<p><i class="fas fa-check text-success"></i></p> }
+                        else
+                        {<p><i class="fas fa-times text-danger"></i></p>}
+
+                    </div>
+                </div>
+
+                @if (victima.Abogado == true)
+                {
+                    <div class="form-row">
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">¿Abogado?</label>
+                            @if (victima.Abogado == true)
+                            {<p><i class="fas fa-check text-success"></i></p>}
+                            else
+                            {<p><i class="fas fa-times text-danger"></i></p>}
+                        </div>
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">Cedula:</label>
+                            <p class="card-text text-monospace text-muted">@victima.Cedula</p>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">Despacho:</label>
+                            <p class="card-text text-monospace text-muted">@victima.Despacho</p>
+                        </div>
+                    </div>
+                }
+                @if (item.Victima.Count() > 1)
+                {
+                    <hr />
+                }
+            }
+        </div>
+    </div>
+
+
+    <!--Detalles del evento-->
+    <div class="card mb-3">
+        <div class="card-header blue-gradient text-white text-center">
+            <i class="fas fa-map-marker-alt"></i> Detalles del evento
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                    <label class="font-italic">Fecha y Hora:</label>
+                    <p class="text-monospace text-muted">@item.FechaEvento</p>
+                </div>
+                <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                    <label class="font-italic">Delito:</label>
+                    <p class="text-monospace text-muted">
+                        @if (item.Delito != null)
+                        {@item.Delito.Tipo }
+                    else
+                    { @sinE}
+                    </p>
+                </div>
+                @if (item.NumTestigo != null)
+                {
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">No. de testigos:</label>
+                        <p class="text-monospace text-muted">@item.NumTestigo</p>
+                    </div>
+                }
+                @if (item.NumTestigo != null)
+                {
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">No. de Emergencia:</label>
+                        <p class="text-monospace text-muted">@item.NumTestigo</p>
+                    </div>
+                }
+                @if (item.Danio != null)
+                {
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Daño:</label>
+                        <p class="text-monospace text-muted">@item.Danio.Tipo</p>
+                    </div>
+                }
+            </div>
+            <div class="form-row">
+                @foreach (var lugar in item.DireccionDenuncia)
+                {
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Estado:</label>
+                        <p class="text-monospace text-muted">@lugar.Colonia.Municipio.Estado.Nombre</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Municipio:</label>
+                        <p class="text-monospace text-muted">@lugar.Colonia.Municipio.Nombre</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Colonia:</label>
+                        <p class="text-monospace text-muted">@lugar.Colonia.Nombre</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">Calle:</label>
+                        <p class="text-monospace text-muted">@lugar.Calle</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">No. Exterior:</label>
+                        <p class="text-monospace text-muted">@lugar.NumExterior</p>
+                    </div>
+                    <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                        <label class="font-italic">No. Interior:</label>
+                        <p class="text-monospace text-muted">@lugar.NumInterior</p>
+                    </div>
+                }
+            </div>
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label class="font-italic">Relato:</label>
+                    @if (@item.Relato != "")
+                    {<p class="card-text text-monospace text-muted boxScroll">@item.Relato</p>}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Probable responsable-->
+    <div class="card mb-3">
+        <div class="card-header blue-gradient text-white text-center">
+            <i class="fas fa-users"></i> Probable Responsable(s)
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                @if (item.Responsable.Count() > 0)
+                {
+                    @foreach (var responsable in item.Responsable)
+                    {
+                        <div class="form-group col-lg-4 col-md-12 col-sm-12">
+                            <label class="font-italic">Nombre:</label>
+                            <p class="text-monospace text-muted">@responsable.Nombre @responsable.PrimerApellido @responsable.SegundoApellido</p>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                            <label class="font-italic">Genero:</label>
+                            <p class="text-monospace text-muted">@responsable.Genero.Sexo</p>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                            <label class="font-italic">Fecha Nacimiento:</label>
+                            <p class="text-monospace text-muted">@responsable.FechaNacimiento</p>
+                        </div>
+                        <div class="form-group col-lg-3 col-md-12 col-sm-12">
+                            <label class="font-italic">Alias:</label>
+                            <p class="text-monospace text-muted">@responsable.Alias</p>
+                        </div>
+                        @foreach (var dirImputado in responsable.DireccionResponsable)
+                        {
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Estado:</label>
+                                <p class="text-monospace text-muted">@dirImputado.Colonia.Municipio.Estado.Nombre</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Municipio:</label>
+                                <p class="text-monospace text-muted">@dirImputado.Colonia.Municipio.Nombre</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Colonia:</label>
+                                <p class="text-monospace text-muted">@dirImputado.Colonia.Nombre</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Calle:</label>
+                                <p class="text-monospace text-muted">@dirImputado.Calle</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">No. Exterior:</label>
+                                <p class="text-monospace text-muted">@dirImputado.NumExterior</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">No. Interior:</label>
+                                <p class="text-monospace text-muted">@dirImputado.NumInterior</p>
+                            </div>
+                        }
+
+                        @foreach (var desc in responsable.DescResponsable)
+                        {
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Color de Piel:</label>
+                                <p class="text-monospace text-muted">@desc.ColorPiel</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Altura:</label>
+                                <p class="text-monospace text-muted">@desc.Altura</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Tipo cabello:</label>
+                                <p class="text-monospace text-muted">@desc.TipoCabello</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Color cabello:</label>
+                                <p class="text-monospace text-muted">@desc.ColorCabello</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Color ojos:</label>
+                                <p class="text-monospace text-muted">@desc.ColorOjos</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Complexión:</label>
+                                <p class="text-monospace text-muted">@desc.Complexion</p>
+                            </div>
+                            <div class="form-group col-lg-2 col-md-12 col-sm-12">
+                                <label class="font-italic">Tatuajes:</label>
+                                <p class="text-monospace text-muted">@desc.Tatuajes</p>
+                            </div>
+                        }
+
+                    }
+                }
+                else
+                {
+                    <p class="text-monospace text-muted">@sinE</p>
+                }
+                @if (item.Responsable.Count() > 1)
+                {
+                    <hr />
+                }
+            </div>
+        </div>
+    </div>

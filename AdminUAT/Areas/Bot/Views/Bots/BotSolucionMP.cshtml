@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewData["Title"] = "Bot";
+    Layout = "_LayoutMDB";
+}
+
+<h4 class="text-muted">
+   Liberación de denuncias por medio de un archivo excel
+</h4>
+<hr />
+<br />
+
+<form class="container" method="post" asp-controller="Bots" asp-action="BotSolucionMP" enctype="multipart/form-data">
+    <div class="form-row">
+        <div class="custom-file col-lg-5 col-md-8 col-sm-12 form-group">
+            <input type="file" class="custom-file-input" id="customFileLang" lang="es" name="file" accept=".xlsx" required>
+            <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+        </div>
+    </div>
+    <div class="form-group py-3">
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+    </div>
+</form>
+
+<hr />
+<div class="text-center">
+    <p>@ViewBag.resumen</p>
+    <p>@ViewBag.sumaA</p>
+    <p>@ViewBag.SumaB</p>
+</div>

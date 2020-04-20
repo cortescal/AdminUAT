@@ -1,0 +1,16 @@
+﻿@model long
+@{
+    Layout = null;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 col-md-12 col-sm-12">
+            <textarea class="form-control z-depth-1 text-monospace text-muted" rows="2" placeholder="Mensaje de seguimiento *" maxlength="4000" id="msjSeguimiento"></textarea>
+            <small class="text-danger" id="errorMsjSeguimiento"></small>
+        </div>
+        <div class="col-lg-2 col-md-12 col-sm-12">
+            <a class="btn blue-gradient mb-2 btn-block" onclick="addSeguimiento('@ViewBag.UrlBase', @Model)" id="btnCampoMsj">Enviar <i class="fas fa-paper-plane"></i></a>
+        </div>
+    </div>
+</div>

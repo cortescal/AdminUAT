@@ -1,0 +1,190 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AdminUAT@@</title>
+
+    <link rel="stylesheet" href="~/lib/fontawesome-free-5.7.1-web/css/all.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-4.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/mbd-free_4.8.1/css/mdb.min.css" />
+    <link rel="stylesheet" href="~/lib/chart.js/css/Chart.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-select-1.13.7/dist/css/bootstrap-select.css" />
+    <link rel="stylesheet" href="~/lib/clockpicker-gh-pages/dist/bootstrap-clockpicker.css" />
+
+    <script src="~/lib/chart.js/js/Chart.js"></script>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mycss.css" asp-append-version="true" />
+
+    <link rel="shortcut icon" href="~/images/iconoFGE2.jpg" />
+
+    <!---->
+    <!---->
+</head>
+<body class="imagenfondo">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-blue-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <img src="~/images/puebla.png" width="50" height="70" />
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <span class="px-3 font-weight-bold">AdminUAT@@</span>
+                }
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1 px-3">
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home"></i></a>
+                            </li>
+
+                            @if (User.IsInRole("Root"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="index"><i class="fas fa-archive"></i></a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-file-alt"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="VistaMP">Reasignar Denuncia</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="Index">Reporte de denuncias</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="ReporteEncuestas">Reporte de encuestas</a>
+                                        <a class="dropdown-item" asp-area="Bot" asp-controller="Bots" asp-action="BotSolucionMP">Liberar denuncias</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Chart" asp-action="Index">Global</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="FM" asp-action="Chart">Fiscal Metropolitano</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="FR" asp-action="Chart">Fiscal Regional</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="EstadisticaObjetivo">Objetivos UAT@@</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="VistaCitasMP">Vista de citas por MP</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="HoraDias" asp-action="Index">Administrar horario</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Horas" asp-action="Index">Administrar Hora</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index"><i class="fas fa-users-cog"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Register"><i class="fas fa-user-plus"></i></a>
+                                </li>
+                            }
+                            else if (User.IsInRole("MP"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-folder-open"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index" asp-route-opc="false"><i class="fas fa-folder"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Agenda" asp-action="Index"><i class="far fa-calendar-alt"></i></a>
+                                </li>
+                            }
+                            else if (User.IsInRole("FiscReg"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-archive"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="FR" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
+                                </li>
+                            }
+                            else if (User.IsInRole("FiscMet"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-archive"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="FM" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
+                                </li>
+                            }
+                            else if (User.IsInRole("AEI"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="index"><i class="fas fa-archive"></i></a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Chart" asp-action="Index">Denuncias</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="EstadisticaObjetivo">Objetivos UAT@@</a>
+                                    </div>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || User.IsInRole("FiscMet") || User.IsInRole("FiscReg"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="AdminSoportes" asp-action="index"><i class="far fa-comment-alt"></i></a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <img src="~/images/icon-fiscalia.png" width="100" height="100" />
+            </div>
+        </nav>
+    </header>
+
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/popper/popper.min.js"></script>
+    <script src="~/lib/bootstrap-4.3.0/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/lib/mbd-free_4.8.1/js/mdb.min.js"></script>
+    <script src="~/lib/bootstrap-select-1.13.7/dist/js/bootstrap-select.js"></script>
+    <script src="~/lib/bootstrap-select-1.13.7/dist/js/i18n/defaults-es_ES.js"></script>
+    <script src="~/lib/clockpicker-gh-pages/dist/bootstrap-clockpicker.js"></script>
+
+    <script src="~/lib/fontawesome-free-5.7.1-web/js/all.js"></script>
+    <script src="~/lib/jquery-blockui/blockui.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/myjs.js" asp-append-version="true"></script>
+
+    <!---->
+
+    <!---->
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            &copy; 2019 - AdminUAT@@ | DGIEyTI | Fiscalía General del Estado
+        </div>
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

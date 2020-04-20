@@ -1,0 +1,48 @@
+﻿@model ICollection<AdminUAT.Models.ExtraModels.UAT.AuxEncuesta>
+@{
+    ViewData["Title"] = "ReporteEncuestas";
+    Layout = "_LayoutMDB";
+}
+
+<div class="row">
+    <div class="col-12 text-center">
+        <h4 class="text-muted">
+            Reporte de encuestas
+        </h4>
+    </div>
+</div>
+<hr />
+
+<form class="form-inline md-form form-sm" method="get" asp-area="" asp-controller="Root" asp-action="ReporteEncuestas">
+    <div class="form-group mx-sm-3 mb-2">
+        <input type="date" name="fecha" class="form-control form-control-sm mr-3 w-75">
+    </div>
+    <div class="form-group mx-sm-3 mb-2">
+        <input type="date" name="fecha2" class="form-control form-control-sm mr-3 w-75">
+    </div>
+    <button type="submit" class="btn btn-primary mb-2 btn-sm"><i class="fa fa-search"></i></button>
+</form>
+
+
+<table class="table table-hover text-center">
+    <thead>
+        <tr class="bg-blue-white">
+            <th scope="col">Municipio</th>
+            <th scope="col">Total</th>
+            <th scope="col">Si</th>
+            <th scope="col">No</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Municipio</td>
+                <td>@(item.TotalSi + item.TotalNo)</td>
+                <td>@item.TotalSi</td>
+                <td>@item.TotalNo</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

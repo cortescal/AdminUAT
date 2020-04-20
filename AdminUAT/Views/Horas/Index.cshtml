@@ -1,0 +1,46 @@
+﻿@model IEnumerable<AdminUAT.Models.AgendaUAT.Hora>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_LayoutMDB";
+}
+
+<h4><a asp-action="Create"><i class="far fa-clock"></i></a> Horas</h4>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-7 col-sm-12">
+        <table class="table table-hover border border-primary z-depth-2 text-center">
+            <thead class="blue-gradient text-white">
+                <tr>
+                    <th scope="col"><i class="far fa-clock"></i></th>
+                    <th scope="col">Estatus</th>
+                    <th scope="col">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.CampoHora hrs
+                        </td>
+                        <td>
+                            @if (item.Activo == true)
+                            {
+                                <i class="fas fa-toggle-on text-success fa-2x"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-toggle-on text-danger fa-2x fa-rotate-180"></i>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-primary"><i class="far fa-edit"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

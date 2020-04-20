@@ -1,0 +1,43 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "_LayoutMDB";
+}
+
+<form id="account" method="post">
+    <div class="col-md-6 col-xl-5 mb-4 py-3">
+        <div class="card wow fadeInRight" data-wow-delay="0.3s">
+            <div class="card-body z-depth-2">
+                <div class="text-center">
+                    <h3 class="dark-grey-text">
+                        <strong>Iniciar Sesión</strong>
+                    </h3>
+                    <hr>
+                </div>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="md-form">
+                    <i class="fas fa-envelope prefix grey-text"></i>
+                    <input asp-for="Input.Email" class="form-control">
+                    <label asp-for="Input.Email">Email</label>
+                    <span asp-validation-for="Input.Email" class="text-danger" style="margin-left:38px;"></span>
+                </div>
+                <div class="md-form">
+                    <i class="fas fa-unlock-alt prefix grey-text"></i>
+                    <input asp-for="Input.Password" class="form-control">
+                    <label asp-for="Input.Password">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger" style="margin-left:38px;"></span>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-indigo">Log in</button>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

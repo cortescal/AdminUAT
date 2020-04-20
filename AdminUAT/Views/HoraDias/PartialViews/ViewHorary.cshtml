@@ -1,0 +1,122 @@
+﻿@model AdminUAT.Models.AgendaUAT.ViewModelAgenda.Horarios
+<!---------------Input Dias MP------------------------>
+<!---------------Fin Dias MP-------------------------->
+<div class="row justify-content-center" id="horario">
+    <div class="col-lg-7 col-md-7 col-sm-7">
+        <div id="fechas" class="row justify-content-center">
+            <form method="post" asp-action="modificaFechas">
+                <p>
+                    <span class="badge-info">Fecha de inicio:</span>
+                        <input class="form-control" type="date" id="fechaInicio" name="fechaInicio"/>
+                    <p>
+                    <span class="badge-info">Fecha final:</span> 
+                        <input class="form-control" type="date" id="fechaFinal" name="fechaFinal"/>
+                    <input type="text" value="@Model.idMP" hidden name="idMP" id="idMp"/>
+                        </p>
+                </p>
+                <div id="fechas" class="row justify-content-center">
+                    <p><input class="btn btn-primary" type="submit" onclick="javascript:validar();" placeholder="Asignar fechas"/></p>
+                </div>
+            </form>
+            
+        </div>
+        <table class="table table-hover border border-primary z-depth text-center">
+            <thead class="blue-gradient text-white">
+                <tr>
+                    <th scope="col"><i class="far fa-clock"></i></th>
+                    @foreach (var item in Model.ModelHorario.dias)
+                    {
+                    <th scope="col">@item.nombreDias</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ModelHorario.horas)
+                {
+                <tr>
+                    <td>@item.campoHora</td>
+
+                    @foreach (var i in Model.horario.Where(x => x.idHora == item.IdHoras))
+                    {
+                        <td>
+                            @if (i.activo == true)
+                            {
+                                <a id="@Model.idMP@i.idDia@i.idHora" class="enviar" code-val="@Model.idMP,@i.idDia,@i.idHora,@i.activo">
+                                    <i id="@i.idDia@i.idHora" class="fas fa-toggle-on text-success fa-2x fa-rotate-180 cambia"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a id="@Model.idMP@i.idDia@i.idHora" class="enviar" code-val="@Model.idMP,@i.idDia,@i.idHora,@i.activo">
+                                    <i id="@i.idDia@i.idHora" class="fas fa-toggle-on text-danger fa-2x fa-rotate-180 cambia"></i>
+                                </a>
+                            }
+                        </td>
+                    }
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    //var temporal = "";
+    $(".enviar").click(function () {
+        var datos = $(this).attr("code-val");
+        var data = datos.split(',');
+        var ida = data[0]+data[1]+data[2];
+        var idi = data[1]+data[2];
+        $.ajax({
+            type: 'POST',
+            data: {
+                idMP: data[0],
+                idDia: data[1],
+                idHora: data[2],
+                activo: data[3]
+            },
+            url: "@Url.Action("modificaHorario","HoraDias")",
+            success: function (response) {
+                //temporal = response;
+                //alert(response.activo);
+                if (response.activo == true || response.activo === true || response.activo == "true") {
+                    $("#" + idi).removeClass("text-danger").addClass("text-success");
+                    $("#" + ida).attr("code-val", data[0] + "," + data[1] + "," + data[2] + "," + response.activo);
+                }
+                else {
+                    $("#" + idi).removeClass("text-success").addClass("text-danger");
+                    $("#" + ida).attr("code-val", data[0] + "," + data[1] + "," + data[2] + "," + response.activo);
+                }
+            },
+            failure: function (response) {
+                alert(response + "Fallo al recibir la peticion");
+            },
+            error: function (response) {
+                alert(response + "Error al recibir la peticion");
+            }
+        });
+    });
+
+    function validar() {
+        var f1 = document.getElementById("fechaInicio").value.split("-");
+        var f2 = document.getElementById("fechaFinal").value.split("-");
+        var id = document.getElementById("idMp").value;
+
+        var fecha1 = new Date(f1[0], f1[1], f1[2]).getTime();
+        var fecha2 = new Date(f2[0], f2[1], f2[2]).getTime();
+        var hoy = new Date().getTime();
+
+        if (id == "") {
+            alert("Seleccione un MP");
+        }
+        else {
+            if (fecha1 < hoy) {
+                alert("Seleccione una fecha mayor");
+            }
+            else if (fecha1 > fecha2) {
+                alert("La segunda fecha debe ser mayor o igual");
+            }
+        }  
+    }
+
+</script>

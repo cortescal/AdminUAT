@@ -1,0 +1,118 @@
+﻿@model IEnumerable<AdminUAT.Models.ExtraModels.Admin.MisSolicitudes>
+
+@{
+    if (ViewBag.ViewPartial)
+    {
+        Layout = null;
+    }
+    else
+    {
+        ViewData["Title"] = "Index";
+        Layout = "_LayoutMDB";
+    }
+    var badge = "";
+}
+
+
+
+<div id="adminSoportesIndexBody">
+    <div class="row">
+        <div class="col-10">
+            <h5>Mis solicitudes</h5>
+        </div>
+        @if (!User.IsInRole("Root"))
+        {
+            <div class="col-2 text-right">
+                <a data-toggle="modal" data-target="#fullHeightModalRight" onclick="viewSoporteCreate('@ViewBag.Ruta')">
+                    <i class="fas fa-plus-circle fa-2x text-primary z-depth-1 rounded-circle">
+                    </i>
+                </a>
+            </div>
+        }
+    </div>
+    <hr />
+
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-hover text-center z-depth-2">
+            <thead>
+                <tr class="blue-gradient text-white">
+                    <th>Folio</th>
+                    @if (User.IsInRole("Root"))
+                    {
+                        <th>Usuario</th>
+                    }
+                    <th>Solicitud</th>
+                    <th>Fecha</th>
+                    <th>Estatus</th>
+                    <th>Cerrar</th>
+                    <th>Nuevos</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td id="@item.Id" class="text-monospace text-danger">
+                        <script>
+                        document.getElementById(@item.Id).innerHTML = foliadora(@item.Id);
+                        </script>
+                    </td>
+                    @if (User.IsInRole("Root"))
+                    {
+                        <td>@item.Usuario</td>
+                    }
+                    <td>@item.Solicitud</td>
+                    <td>@item.AltaSistema</td>
+                    @if (item.Atendido)
+                    {
+                        <td><span class="badge badge-pill badge-success">atendido</span></td>
+                    }
+                    else
+                    {
+                        if (User.IsInRole("Root"))
+                        {
+                            <td><a data-toggle="modal" data-target="#modalClasico" onclick="confirmaCerrarSoporte('@ViewBag.Ruta/AdminSoportes/ConfirmaSoporteAtendido', @item.Id)"><span class="badge badge-pill badge-warning">en espera</span></a></td>
+                        }
+                        else
+                        {
+                            <td><span class="badge badge-pill badge-warning">en espera</span></td>
+                        }
+                    }
+
+                    <td>
+                        @if (item.Atendido == false)
+                        {
+                            <i class="fas fa-lock text-muted"></i>
+                        }
+                        else
+                        {
+                            <a class="text-success" data-toggle="modal" data-target="#modalClasico" title="Finalizar folio" onclick="confirmaCerrarSoporte('@ViewBag.Ruta/AdminSoportes/ConfirmaCerrarSoporte', @item.Id)"><i class="fas fa-lock"></i></a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.NumNotificaciones > 0) { badge = "badge-danger"; } else { badge = "badge-light"; }
+                        <a class="btn btn-outline-dark btn-sm" onclick="notificaciones('@ViewBag.Ruta', @item.Id)">
+                            <i class="far fa-comments"></i> <span class="badge @badge ml-2">@item.NumNotificaciones</span>
+                        </a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="text-center text-muted py-5">
+            <p><i class="far fa-comment-alt fa-2x"></i></p>
+            <p class="font-weight-bolder font-italic">Sin solicitudes pendientes</p>
+        </div>
+    }
+</div>
+
+@if (!ViewBag.ViewPartial)
+{
+    <partial name="_ModalButtomXL" />
+    <partial name="_Modal" />
+}
+

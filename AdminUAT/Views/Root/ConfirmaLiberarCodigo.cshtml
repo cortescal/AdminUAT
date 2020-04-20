@@ -1,0 +1,11 @@
+﻿@model long
+@{
+    Layout = null;
+}
+
+<div class="text-center">
+    <p class="font-italic">¿Esta seguro que desea liberar el código de la denuncia @Model?</p>
+    <a class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</a>
+    <a class="btn btn-primary btn-sm" asp-controller="Root" asp-action="LiberaToken" asp-route-denunciaId="@Model">Confirmar</a>
+</div>
+

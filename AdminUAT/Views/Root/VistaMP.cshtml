@@ -1,0 +1,167 @@
+﻿@model IEnumerable<AdminUAT.Models.Denuncias.Denuncia>
+
+@{
+    ViewData["Title"] = "Denuncias";
+    string sinE = "No Especificado";
+}
+
+<div class="row">
+    <div class="col-6">
+        <h4 class="text-muted">Denuncias</h4>
+    </div>
+    <div class="col-6 text-right">
+        <a class="btn btn-primary" asp-action="VistaMP" asp-route-mpId="@ViewBag.mpId" asp-route-ss="@ViewBag.ss">
+            <i class="fas fa-exchange-alt"></i>
+            <span class="sr-only">unread messages</span>
+        </a>
+    </div>
+</div>
+<hr />
+
+<form method="post" asp-area="" asp-controller="Root" asp-action="VistaMP">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <input name="fecha" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-12">
+            <select name="mpId" class="selectpicker form-control" data-live-search="true">
+                <option></option>
+                @foreach (var item in ViewBag.mps)
+                {
+                    <option value="@item.Id">@item.Nombre @item.PrimerApellido @item.SegundoApellido - [@item.Activo] - @item.UR.Nombre</option>
+                }
+            </select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-7 col-md-7 col-sm-12">
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-12">
+            <button type="submit" class="btn btn-outline-dark btn-block"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+</form>
+<br />
+
+
+<div class="card-header text-monospace font-weight-bold text-center bg-blue-white">
+    <i class="fas fa-file-alt"></i> Denuncias |
+    @if (ViewBag.mp != null && Model.Count() > 0)
+    {<button class="btn btn-link text-white"  data-toggle="modal" data-target="#modalReasignarDenuncias"><i class="fas fa-exchange-alt"></i></button>} @ViewBag.mp | Total @Model.Count()
+</div>
+
+<table class="table table-hover text-center">
+    <thead>
+        <tr class="bg-blue-white">
+            <th scope="col">#</th>
+            <th scope="col">Folio</th>
+            <th scope="col">Inicio</th>
+            <th scope="col">Kiosco</th>
+            <th scope="col">Delito</th>
+            <th scope="col">Paso</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Expediente</td>
+                <td>@item.AltaSistema</td>
+                <td>@item.BitaKiosco.Nombre</td>
+                @if (item.Delito != null)
+                {
+                    <td>@item.Delito.Tipo</td> }
+                else
+                {
+                    <td>@sinE</td>}
+                @if (@item.Paso == 3)
+                {
+                    <td><b class="text-success">3</b></td>
+                    <td>
+                        @if (item.SolucionId == null)
+                        {<i class="fa fa-circle text-warning"></i>}
+                        else
+                        {<i class="fa fa-circle text-success"></i>}
+                    </td>
+                    <td>
+                        <a asp-action="" data-toggle="modal" data-target=".bd-example-modal-xl" onclick="detailsDenuncia('@item.Id','Details')"><i class="fas fa-info-circle"></i></a>
+                    </td>
+                }
+                else
+                {
+                    <td><b class="text-danger">@item.Paso</b></td>
+                    <td></td>
+                    <td></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detalles">
+                <!--vista parcial-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Reasignar denucnias-->
+<div class="modal" tabindex="-1" role="dialog" id="modalReasignarDenuncias">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-blue-white">
+                <h6 class="text-white">Reasignar denuncias de @ViewBag.mp</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-area="" asp-controller="Root" asp-action="ReasignarDenuncias" asp-route-mpId="@ViewBag.mpId">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-10 col-sm-12">
+                            <select name="mpId2" class="selectpicker form-control" data-live-search="true">
+                                <option> - - selecciona una opción - - </option>
+                                @foreach (var item in ViewBag.mps)
+                                {
+                                    <option value="@item.Id">@item.Nombre @item.PrimerApellido @item.SegundoApellido - [@item.Activo] - @item.UR.Nombre</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row py-3">
+                        <div class="col-lg-9 col-md-10 col-sm-12">
+                            <select name="denunciasId" class="selectpicker form-control" multiple data-actions-box="true" data-live-search="true">
+                                @foreach (var item in Model)
+                                {
+                                    <option data-subtext="@item.Expediente" value="@item.Id">@item.Id</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-7 col-md-7 col-sm-12">
+                        </div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            <button type="submit" class="btn btn-outline-dark btn-block">Reasignar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

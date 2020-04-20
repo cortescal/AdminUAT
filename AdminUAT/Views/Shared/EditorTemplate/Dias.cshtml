@@ -1,0 +1,44 @@
+﻿@model AdminUAT.Models.AgendaUAT.ViewModelAgenda.Horario
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<input value="@Model.activo" hidden/>
+<label>Dia</label>
+<input type="text" placeholder="@Model.idDia"/>
+<label>Hora</label>
+<input type="text" placeholder="@Model.idHora"/>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-7 col-sm-7">
+        <table class="table table-hover border border-primary z-depth text-center">
+            <thead class="blue-gradient text-white">
+                <tr>
+                    <th scope="col"><i class="far fa-clock"></i></th>
+                    <th scope="auto">Lunes</th>
+                    <th scope="auto">Martes</th>
+                    <th scope="auto">Miercoles</th>
+                    <th scope="auto">Jueves</th>
+                    <th scope="auto">Viernes</th>
+                    <th scope="auto">Sabado</th>
+                    <th scope="auto">Domingo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> @Model.idHora</td>
+                    <td>
+                        @if(Model.activo==true)
+                        {
+                            <i class="fas fa-toggle-on text-success fa-2x"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-toggle-on text-danger fa-2x fa-rotate-180"></i>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

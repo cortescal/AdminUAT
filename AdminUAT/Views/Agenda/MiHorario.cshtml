@@ -1,0 +1,39 @@
+﻿@model ICollection<AdminUAT.Models.AgendaUAT.Dia>
+@{
+    Layout = null;
+}
+
+@if (ViewBag.sin_horario)
+{
+    <div class="py-5 text-center text-muted">
+        <p><i class="far fa-clock fa-2x"></i></p>
+        <p>No cuentas con horario registrado</p>
+    </div>
+}
+
+<hr class="w-75" />
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+        @foreach (var item in Model)
+        {
+            <table class="table table-hover border border-primary z-depth-2 text-center">
+                <thead class="blue-gradient text-white">
+                    @if (item.HoraDia.Count() > 0)
+                    {
+                        <tr>
+                            <th>@item.Nombre</th>
+                        </tr>
+                    }
+                </thead>
+                <tbody>
+                    @foreach (var i in item.HoraDia)
+                    {
+                        <tr>
+                            <td>@i.Hora.CampoHora hrs</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

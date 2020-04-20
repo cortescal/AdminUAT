@@ -1,0 +1,56 @@
+﻿@model ICollection<AdminUAT.Models.AdminUat.Noticia>
+
+@{
+    ViewData["Title"] = "Bienvenido(a)";
+    Layout = "_LayoutMDB";
+    var color = true;
+}
+
+<hr class="py-2" />
+<div class="container shadow-lg p-3 mb-5 rounded border border-success">
+    <br />
+    <h2 class="px-3 text-muted">Bienvenido(a)</h2>
+    <br />
+    <div class="col-12">
+        <div class="alert blue-gradient text-monospace text-center text-white">
+            <h5>
+                <spain class="fa fa-user"></spain> @ViewBag.nombre
+            </h5>
+            <a href="~/Home/Manual" class="btn btn-info btn-sm rounded-pill">Guía de usuario</a>
+        </div>
+    </div>
+    <br />
+</div>
+
+<!--Sección de noticias-->
+<div class="blockquote container border-light rounded-pill" style="border-right-style:solid; border-right-width:4px;">
+    <div class="text-center">
+        <h5 class="text-muted font-weight-bold">Sección de noticias</h5>
+    </div>
+</div>
+<hr />
+
+<div class="my-scroll">
+    @foreach (var item in Model)
+    {
+        if (color)
+        {
+            <div class="blockquote container border-secondary">
+                <div class="col-12">
+                    <h5 class="text-secondary font-weight-bold">prueba</h5>
+                    <p>holaffffffffffffffffffffffffffff ffffffffffffffffffff fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="blockquote container border-default">
+                <div class="col-12">
+                    <h5 class="text-default font-weight-bold">prueba</h5>
+                    <p>holaffffffffffffffffffffffffffff ffffffffffffffffffff fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</p>
+                </div>
+            </div>
+        }
+        color = !color;
+    }
+</div>

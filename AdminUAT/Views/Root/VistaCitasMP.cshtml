@@ -1,0 +1,19 @@
+﻿@model ICollection<AdminUAT.Models.MinisterioPublico.MP>
+@{   
+     Layout = "_LayoutMDB";
+}
+
+<h5>Cita de agente del ministerio público</h5>
+<hr />
+
+<div class="row">
+    <select class="selectpicker col-lg-5 col-md-6 col-sm-12" onchange="getVistaCitaMP(this.value)" data-live-search="true" data-style="btn-primary">
+        <option value=""></option>
+        @foreach (var item in Model)
+        {
+            <option data-subtext="@item.Activo - @item.Id" value="@item.Id">@item.Nombre @item.PrimerApellido @item.SegundoApellido</option>
+        }
+    </select>
+</div>
+
+<div id="vista_mp" class="py-3"></div>

@@ -1,0 +1,23 @@
+﻿.bg-blue-white{
+    background-color: darkblue;
+    color: white;
+}
+
+.imagenfondo {
+    background-image: url(../images/fondo_fisc.jpg);
+    background-repeat: repeat-y;
+    background-position-x: center;
+    background-position-y: center;
+    width: 100%;
+    height: 100%;
+}
+
+.boxScroll {
+    height: 120px;
+    overflow: auto;
+}
+
+.my-scroll {
+    overflow: auto;
+    height:50vh;
+}
