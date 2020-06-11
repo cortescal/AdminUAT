@@ -27,15 +27,17 @@ namespace AdminUAT.Controllers
         private readonly ApplicationDbContext _dbcontext;
         private readonly ISubProceso _subProceso;
         private readonly IQueryDenuncias _queryDenuncias;
+        private readonly IEnvioCorreo _correo;
 
         public DenunciasController(NewUatDbContext context, UserManager<ApplicationUser> userManager,
-            ApplicationDbContext dbcontext, ISubProceso subProceso, IQueryDenuncias queryDenuncias)
+            ApplicationDbContext dbcontext, ISubProceso subProceso, IQueryDenuncias queryDenuncias , IEnvioCorreo correo)
         {
             _context = context;
             _userManager = userManager;
             _dbcontext = dbcontext;
             _subProceso = subProceso;
             _queryDenuncias = queryDenuncias;
+            _correo = correo;
         }
 
         // GET: Denuncias
@@ -52,7 +54,7 @@ namespace AdminUAT.Controllers
                 lista = await SolicitudMP(opc, fecha, id, user.MatchMP);
             }
             else
-            {               
+            {
                 lista = SolicitudGeneral(fecha, opc, id, palabra, kiosco);
             }
 
@@ -169,7 +171,7 @@ namespace AdminUAT.Controllers
                 fecha = fecha.ToString("dd-MM-yyyy") != "01-01-0001" ? fecha : DateTime.Now;
                 lista = _queryDenuncias.AEITodas(fecha, opc);
                 ViewBag.titulo = opc == true ? "Denuncias recibidas del " + fecha.ToString("dd-MM-yyyy") : "Denuncias sin concluir del " + fecha.ToString("dd-MM-yyyy");
-            }            
+            }
 
             if (User.IsInRole("FiscMet"))
             {
@@ -179,7 +181,7 @@ namespace AdminUAT.Controllers
             else if (User.IsInRole("FiscReg"))
             {
                 lista = lista.Where(x => x.MP.UR.RegionId != 6).ToList();
-                ViewBag.kioscos = _context.BitaKiosco.Where(x => x.UR.RegionId != 6).OrderBy(x => x.Nombre).ToList();               
+                ViewBag.kioscos = _context.BitaKiosco.Where(x => x.UR.RegionId != 6).OrderBy(x => x.Nombre).ToList();
             }
             else
             {
@@ -259,7 +261,7 @@ namespace AdminUAT.Controllers
             return false;
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Root, MP")]
@@ -325,11 +327,11 @@ namespace AdminUAT.Controllers
                     }
                 }
             }
-           
+
 
             var solucion = await _context.Solucion.FindAsync(obj.SolucionId);
 
-            return Ok(new { nota = obj.NotaSolucion, fecha = ((DateTime)obj.FechaSolucion).ToString("dd/MM/yyyy hh:mm:ss tt") , solucion = solucion.Nombre, msj = "Exito al guardar los cambios", error = false } );
+            return Ok(new { nota = obj.NotaSolucion, fecha = ((DateTime)obj.FechaSolucion).ToString("dd/MM/yyyy hh:mm:ss tt"), solucion = solucion.Nombre, msj = "Exito al guardar los cambios", error = false });
         }
 
         [Authorize(Roles = "Root, MP")]
@@ -370,15 +372,36 @@ namespace AdminUAT.Controllers
                 email.Priority = MailPriority.Normal;
 
                 SmtpClient smtp = new SmtpClient();
-                email.From = new MailAddress("uat@fiscalia.puebla.gob.mx");
-                smtp.Host = "10.24.1.3";
-                smtp.Port = 25;
-                smtp.EnableSsl = false;
+
+                email.From = new MailAddress("uat.fiscalia.puebla@gmail.com");
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat@fiscalia.puebla.gob.mx", "Fge.2016*");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla@gmail.com", "Fge.2020**");
+
+                //if (denunciante.Email.Contains("@gmail.com"))
+                //{
+                //    email.From = new MailAddress("uat.fiscalia.puebla@gmail.com");
+                //    smtp.Host = "smtp.gmail.com";
+                //    smtp.Port = 587;
+                //    smtp.EnableSsl = true;
+                //    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                //    smtp.UseDefaultCredentials = false;
+                //    smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla@gmail.com", "Fge.2020**");
+                //}
+                //else
+                //{
+                //    email.From = new MailAddress("uat@fiscalia.puebla.gob.mx");
+                //    smtp.Host = "10.24.1.3";
+                //    smtp.Port = 25;
+                //    smtp.EnableSsl = false;
+                //    smtp.UseDefaultCredentials = false;
+                //    smtp.Credentials = new NetworkCredential("uat@fiscalia.puebla.gob.mx", "Fge.2016*");                 
+                //}
                 smtp.Send(email);
                 email.Dispose();
-
             }
             catch (Exception ex)
             {
@@ -386,6 +409,39 @@ namespace AdminUAT.Controllers
             }
 
             return Ok(new { resp = true, email = denunciante.Email });
+        }
+
+        [Authorize(Roles = "Root")]
+        [HttpPost]
+        public async Task<IActionResult> ReenviarEmail(int id, int paso)
+        {
+            var titulo = "";
+            string msj = "";
+            if (paso==1)
+            {
+                titulo = "UAT@ - CONFIRMACIÓN DE CORREO ELECTRÓNICO";
+                msj= $"{Request.Scheme}://fiscalia.puebla.gob.mx:8099/";
+            }
+            else if(paso==3)
+            {
+                var idMP = await _context.Denuncia.Where(x => x.Id == id).Select(x => x.MPId).FirstOrDefaultAsync();
+                titulo = "UAT@ - AVISO DE RECEPCIÓN DE DENUNCIA";
+
+                if (idMP > 0)
+                {
+                    var mp = await _context.MP
+                        .Include(x => x.UR)
+                        .ThenInclude(x => x.Region)
+                    .Where(x => x.Id == idMP)
+                    .FirstOrDefaultAsync();
+
+                    msj = $"<b>Lic. {mp.Nombre} {mp.PrimerApellido} {mp.SegundoApellido}, Agente del Ministerio Público</b>, adscrito a la Fiscalía de Investigación {mp.UR.Region.Nombre}." +
+                        $"<p><b>Datos de contacto</b></p>" +
+                        $"<p>{mp.UR.Nota}</p>";
+                }   
+            }
+            var respuesta = _correo.SendCorreo(titulo, paso, id, msj);
+            return Ok(respuesta);
         }
 
         private bool DenunciaExists(long id)

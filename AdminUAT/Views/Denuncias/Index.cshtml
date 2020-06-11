@@ -89,6 +89,10 @@
                     <th scope="col">Estatus</th>
                     <th scope="col"></th>
                 }
+                else
+                {
+                    <th>Opciones</th>
+                }
             }
             else
             {
@@ -133,6 +137,10 @@
                 else
                 {
                     <th class="text-danger font-weight-bold">@item.Paso</th>
+                    if (ViewBag.opc&&item.Paso==1)
+                    {
+                        <th><button class="btn-sm" style="background-color: #0AA9CC; border: none; color:white" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar correo paso1</button></th>
+                    }
                 }
             }
 
@@ -153,7 +161,7 @@
             @if (User.IsInRole("Root") && item.SolucionId == null && item.Paso == 3)
             {
                 <td>
-                    <a data-toggle="modal" data-target="#modalClasico" title="liberar código"  onclick="alertaConfirmacion('@ViewBag.ruta/Root/ConfirmaLiberarCodigo', @item.Id)">
+                    <a data-toggle="modal" data-target="#modalClasico" title="liberar código" onclick="alertaConfirmacion('@ViewBag.ruta/Root/ConfirmaLiberarCodigo', @item.Id)">
                         <i class="fas fa-key text-secondary"></i>
                     </a>
                 </td>
@@ -202,5 +210,22 @@
     </div>
 </div>
 
-
 <partial name="_Modal" />
+
+<script>
+    function reenviarCorreo(id, paso) {
+    $.ajax({
+        type: 'POST',
+        data: { id: id, paso: paso },
+        url: "@Url.Action("ReenviarEmail","Denuncias")",
+        success: function (response) {
+            if (response == true) {
+                alert("Se ha enviado el correo del paso " + paso + " con el numero de folio: " + id);
+            }
+            else {
+                alert("No ha podido enviar el correo con numero de folio: " + id);
+            }
+        },
+    })
+}
+</script>

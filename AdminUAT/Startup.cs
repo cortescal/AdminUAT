@@ -62,6 +62,7 @@ namespace AdminUAT
             //Add dependencias
             services.AddTransient<ISubProceso, SubProceso>();
             services.AddTransient<IQueryDenuncias, QueryDenuncias>();
+            services.AddTransient<IEnvioCorreo, EnvioCorreo>();
 
             services.ConfigureApplicationCookie(options =>
             {

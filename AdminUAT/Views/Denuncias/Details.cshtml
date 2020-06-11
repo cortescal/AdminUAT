@@ -7,7 +7,6 @@
 }
 
 <div style="word-wrap: break-word;">
-
     <div class="card mb-3">
         <div class="card-header blue-gradient text-white text-center">
             Denuncia @item.Expediente
@@ -56,12 +55,27 @@
                 {
                     <hr />
                     <div class="row text-right">
-                        <div class="col-7">
-                            <div class="text-muted text-monospace font-weight-bold">Atención a Denuncia</div>
-                        </div>
-                        <div class="col-5" id="btnMail">
-                            <button class="btn btn-outline-success btn-sm" onclick="SendMailToken(@item.Id)">Enviar código</button>
-                        </div>
+                        @if (item.Paso == 3)
+                        {
+                            <div class="col-6">
+                                <div class="text-muted text-monospace font-weight-bold">Atención a Denuncia</div>
+                            </div>
+                            <div class="col-3" id="btnMail">
+                                <button class="btn btn-outline-success btn-sm" onclick="SendMailToken(@item.Id)">Enviar código</button>
+                            </div>
+                            <div class="col-3" id="btnMail">
+                                <button class="btn btn-sm" style="background-color: #0AA9CC; border: none; color:white" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar Correo Paso 3</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-7">
+                                <div class="text-muted text-monospace font-weight-bold">Atención a Denuncia</div>
+                            </div>
+                            <div class="col-5" id="btnMail">
+                                <button class="btn btn-outline-success btn-sm" onclick="SendMailToken(@item.Id)">Enviar código</button>
+                            </div>
+                        }
                     </div>
                     <hr />
                     <div id="msjToken">
