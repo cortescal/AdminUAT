@@ -163,14 +163,18 @@ namespace AdminUAT.Controllers
                 table.AddCell(denunciante.FechaNacimiento.ToString("dd/MM/yyyy"));
 
                 int edad = 0;
-                if (DateTime.Now.ToString("yyyy") != denunciante.FechaNacimiento.ToString("yyyy"))
+                //////////////////////
+                table.AddCell("Edad");
+                if (DateTime.Now.ToString("yyyy") != denunciante.FechaNacimiento.ToString("yyyy")&&DateTime.Now.Year>denunciante.FechaNacimiento.Year)
                 {
                     edad = DateTime.Today.AddTicks(-denunciante.FechaNacimiento.Ticks).Year - 1;
+                    table.AddCell(edad.ToString());
                 }
-                
-                table.AddCell("Edad");
-                table.AddCell(edad.ToString());
-
+                else
+                {
+                    table.AddCell("");
+                }  
+                //////////////////////
                 table.AddCell("Escolaridad");
                 table.AddCell(denunciante.Escolaridad.Descripcion);
 
