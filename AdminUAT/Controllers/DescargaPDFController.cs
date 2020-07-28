@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,16 +60,43 @@ namespace AdminUAT.Controllers
                 doc.Open();// Open Dpcument to write
 
                 // Creamos la imagen 
- 
-                    var root = _hostingEnvironment.WebRootPath;
 
-                Image imagen = Image.GetInstance(Path.Combine(root, @"images\ENCABEZADO_4.png"));
-                imagen.ScaleAbsoluteWidth(500f);
-                imagen.ScaleAbsoluteHeight(90f);
-                imagen.SetAbsolutePosition(56, 863);
+                var root0 = _hostingEnvironment.WebRootPath;
+
+                Image imagen0 = Image.GetInstance(Path.Combine(root0, @"images\puebla.png"));
+                //66
+                imagen0.ScaleAbsoluteWidth(55f);
+                imagen0.ScaleAbsoluteHeight(65f);
+                imagen0.SetAbsolutePosition(66, 840);
+                //imagen.SetAbsolutePosition(330, 863);
+                //Agregamos la imagen al documeno.
+                doc.Add(imagen0);
+
+                //Parrafo
+                var FontColour = new BaseColor(35, 31, 32);
+                var Calibri8 = FontFactory.GetFont("Arial", 17, FontColour);
+
+                Paragraph paragraph0 = new Paragraph("Denuncia en Línea", Calibri8) { IndentationRight = 60f};
+                paragraph0.SetAlignment("center");
+                paragraph0.Font.SetStyle("bold");
+                doc.Add(paragraph0 );
+
+                
+                //
+
+                // Creamos la imagen 
+
+                var root = _hostingEnvironment.WebRootPath;
+
+                Image imagen = Image.GetInstance(Path.Combine(root, @"images\logo.png"));
+                //188 180 176 170 165
+                imagen.ScaleAbsoluteWidth(165f);
+                imagen.ScaleAbsoluteHeight(55f);
+                //imagen.SetAbsolutePosition(56, 863);
+                imagen.SetAbsolutePosition(405, 840);
                 //Agregamos la imagen al documeno.
                 doc.Add(imagen);
-
+                /*
                 //Marca de agua
                 Image objImagePdf;
 
@@ -80,10 +108,11 @@ namespace AdminUAT.Controllers
                 objImagePdf.Alignment = iTextSharp.text.Image.UNDERLYING;
                 // Coloca la imagen en una posición absoluta
                 objImagePdf.SetAbsolutePosition(44, 0);
+                //objImagePdf.SetAbsolutePosition(400, 0);
                 // Imprime la imagen como fondo de página
                 doc.Add(objImagePdf);
 
-
+                */
                 /*Image imagen = Image.GetInstance(Path.Combine(root, @"images\logo2.png"));
                 imagen.ScaleAbsoluteWidth(70f);
                 imagen.ScaleAbsoluteHeight(70f);
@@ -104,7 +133,7 @@ namespace AdminUAT.Controllers
                 //Tabla 1
                 PdfPTable table = new PdfPTable(2);
 
-                Paragraph paragraph3 = new Paragraph("DENUNCIA ELECTRÓNICA");
+                Paragraph paragraph3 = new Paragraph("DATOS GENERALES");
                 paragraph3.Font.SetStyle("bold");
  
                 PdfPCell cell = new PdfPCell(new Phrase(paragraph3));
