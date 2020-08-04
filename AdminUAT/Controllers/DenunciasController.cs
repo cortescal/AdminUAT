@@ -373,13 +373,13 @@ namespace AdminUAT.Controllers
 
                 SmtpClient smtp = new SmtpClient();
 
-                email.From = new MailAddress("uat.fiscalia.puebla@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.1@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@gmail.com", "Fge.2020**");
 
                 //if (denunciante.Email.Contains("@gmail.com"))
                 //{
