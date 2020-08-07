@@ -373,13 +373,13 @@ namespace AdminUAT.Controllers
 
                 SmtpClient smtp = new SmtpClient();
 
-                email.From = new MailAddress("uat.fiscalia.puebla.1@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.4@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.4@gmail.com", "Fge.2020**");
 
                 //if (denunciante.Email.Contains("@gmail.com"))
                 //{
@@ -405,7 +405,41 @@ namespace AdminUAT.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new { resp = false, email = "" });
+                //return Ok(new { resp = false, email = "" });
+                var value = _subProceso.AsignaToken(id);
+
+                MailMessage email = new MailMessage();
+                email.To.Add(new MailAddress(denunciante.Email));
+                email.Subject = "Codigo de ratificación";
+                string name = denunciante.Nombre + " " + denunciante.PrimerApellido + " " + denunciante.SegundoApellido;
+                email.Body = string.Format(
+                    @"<center><b>Fiscalía General del Estado de Puebla</b></center>
+                    <p>Estimado <b>{0}:</b></p>
+                    <p>Este es el código de ratificación de tu denuncia, el cual sera solicitado por el Ministerio Público:</p>
+                    <p><b>{1}</b></p>
+                    <p>Estamos para servirte en <b>Fiscalínea: 2-11-7900 extensión 2036:</b></p>
+                    <p>
+                    Te recordamos nuestro domicilio:<br/>
+                    Boulevard “Héroes del 5 de Mayo” esquina con Avenida 31 Oriente<br/>
+                    Col. Ladrillera de Benítez, C.P. 72530<br/>
+                    Puebla, Pue. MX.<br/>
+                    </p>
+                    ", name, value);
+                email.IsBodyHtml = true;
+                email.Priority = MailPriority.Normal;
+
+                SmtpClient smtp = new SmtpClient();
+
+                email.From = new MailAddress("uat.fiscalia.puebla.5@gmail.com");
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.5@gmail.com", "Fge.2020**");
+
+                smtp.Send(email);
+                email.Dispose();
             }
 
             return Ok(new { resp = true, email = denunciante.Email });

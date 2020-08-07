@@ -44,13 +44,13 @@ namespace AdminUAT.Dependencias
             try
             {
 
-                email.From = new MailAddress("uat.fiscalia.puebla.1@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.4@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.4@gmail.com", "Fge.2020**");
 
                 //if (emailAddress.ToLower().Contains("@gmail.com", StringComparison.CurrentCultureIgnoreCase))
                 //{
@@ -77,7 +77,7 @@ namespace AdminUAT.Dependencias
             }
             catch (Exception ex)
             {
-                email.From = new MailAddress("uat.fiscalia.puebla@outlook.com");
+                /*email.From = new MailAddress("uat.fiscalia.puebla@outlook.com");
                 smtp.Host = "smtp.live.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = false;
@@ -86,6 +86,17 @@ namespace AdminUAT.Dependencias
                 smtp.Send(email);
                 email.Dispose();
                 ex = ex;
+                */
+                email.From = new MailAddress("uat.fiscalia.puebla.5@gmail.com");
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.5@gmail.com", "Fge.2020**");
+
+                smtp.Send(email);
+                email.Dispose();
             }
 
             return true;
