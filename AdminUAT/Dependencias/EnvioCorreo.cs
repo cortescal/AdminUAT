@@ -44,13 +44,13 @@ namespace AdminUAT.Dependencias
             try
             {
 
-                email.From = new MailAddress("uat.fiscalia.puebla.4@gmail.com");
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = true;
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                email.From = new MailAddress("uat.fiscalia.puebla.2@outlook.com");
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.4@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.2@outlook.com", "Fge.2020**", "outlook.com");
+                smtp.Host = "smtp-mail.outlook.com";
+                smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
+                smtp.Port = 25;
+                smtp.EnableSsl = true;
 
                 //if (emailAddress.ToLower().Contains("@gmail.com", StringComparison.CurrentCultureIgnoreCase))
                 //{
@@ -87,13 +87,13 @@ namespace AdminUAT.Dependencias
                 email.Dispose();
                 ex = ex;
                 */
-                email.From = new MailAddress("uat.fiscalia.puebla.5@gmail.com");
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = true;
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                email.From = new MailAddress("uat.fiscalia.puebla.1@outlook.com");
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.5@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@outlook.com", "Fge.2020**", "outlook.com");
+                smtp.Host = "smtp-mail.outlook.com";
+                smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
+                smtp.Port = 25;
+                smtp.EnableSsl = true;
 
                 smtp.Send(email);
                 email.Dispose();
