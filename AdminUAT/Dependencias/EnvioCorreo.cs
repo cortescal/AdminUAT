@@ -43,50 +43,29 @@ namespace AdminUAT.Dependencias
 
             try
             {
-
-                email.From = new MailAddress("uat.fiscalia.puebla.2@outlook.com");
+                /*
+                email.From = new MailAddress("uat.fiscalia.puebla.3@outlook.com");
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.2@outlook.com", "Fge.2020**", "outlook.com");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.3@outlook.com", "Fge.2020**", "outlook.com");
                 smtp.Host = "smtp-mail.outlook.com";
                 smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
-
-                //if (emailAddress.ToLower().Contains("@gmail.com", StringComparison.CurrentCultureIgnoreCase))
-                //{
-                //    email.From = new MailAddress("uat.fiscalia.puebla@gmail.com");
-                //    smtp.Host = "smtp.gmail.com";
-                //    smtp.Port = 587;
-                //    smtp.EnableSsl = true;
-                //    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                //    smtp.UseDefaultCredentials = false;
-                //    smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla@gmail.com", "Fge.2020**");
-                //}
-                //else
-                //{
-                //    email.From = new MailAddress("uat@fiscalia.puebla.gob.mx");
-                //    smtp.Host = "10.24.1.3";
-                //    smtp.Port = 25;
-                //    smtp.EnableSsl = false;
-                //    smtp.UseDefaultCredentials = false;
-                //    smtp.Credentials = new NetworkCredential("uat@fiscalia.puebla.gob.mx", "Fge.2016*");
-                //}
+                */
+                email.From = new MailAddress("uat.fiscalia.puebla.7@gmail.com");
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.7@gmail.com", "Fge.2020**");
 
                 smtp.Send(email);
                 email.Dispose();
             }
             catch (Exception ex)
             {
-                /*email.From = new MailAddress("uat.fiscalia.puebla@outlook.com");
-                smtp.Host = "smtp.live.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = false;
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla@outlook.com", "Fge.2018*");
-                smtp.Send(email);
-                email.Dispose();
-                ex = ex;
-                */
+                /*
                 email.From = new MailAddress("uat.fiscalia.puebla.1@outlook.com");
                 smtp.UseDefaultCredentials = false;
                 smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@outlook.com", "Fge.2020**", "outlook.com");
@@ -94,6 +73,14 @@ namespace AdminUAT.Dependencias
                 smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
+                */
+                email.From = new MailAddress("uat.fiscalia.puebla.8@gmail.com");
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.8@gmail.com", "Fge.2020**");
 
                 smtp.Send(email);
                 email.Dispose();
