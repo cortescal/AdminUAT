@@ -139,7 +139,7 @@
                     <th class="text-danger font-weight-bold">@item.Paso</th>
                     if (ViewBag.opc&&item.Paso==1)
                     {
-                        <th><button class="btn-sm" style="background-color: #0AA9CC; border: none; color:white" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar correo paso1</button></th>
+                        <th><button class="btn-sm btnCorreo" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar correo paso1</button></th>
                     }
                 }
             }

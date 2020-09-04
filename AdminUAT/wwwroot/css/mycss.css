@@ -4,8 +4,9 @@
 }
 
 .imagenfondo {
-    background-image: url(../images/fondo_fisc.jpg);
-    background-repeat: repeat-y;
+    background-image: url(../images/fondo_fisc.png);
+    background-repeat: no-repeat;
+    background-attachment: scroll;
     background-position-x: center;
     background-position-y: center;
     width: 100%;

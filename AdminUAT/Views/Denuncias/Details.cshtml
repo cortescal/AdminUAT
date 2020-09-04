@@ -8,7 +8,7 @@
 
 <div style="word-wrap: break-word;">
     <div class="card mb-3">
-        <div class="card-header blue-gradient text-white text-center">
+        <div class="card-header blue-gradient1 text-white text-center">
             Denuncia @item.Expediente
             <a class="text-white px-3" asp-area="" asp-controller="DescargaPDF" asp-action="GeneraPDF" asp-route-id="@item.Id"><i class="fas fa-download"></i></a>
         </div>
@@ -64,7 +64,7 @@
                                 <button class="btn btn-outline-success btn-sm" onclick="SendMailToken(@item.Id)">Enviar código</button>
                             </div>
                             <div class="col-3" id="btnMail">
-                                <button class="btn btn-sm" style="background-color: #0AA9CC; border: none; color:white" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar Correo Paso 3</button>
+                                <button class="btn btn-sm btnCorreo" onclick="reenviarCorreo(@item.Id,@item.Paso)">Enviar Correo Paso 3</button>
                             </div>
                         }
                         else
@@ -168,7 +168,7 @@
 
 <!--Denunciante o victima-->
     <div class="card mb-3">
-        <div class="card-header blue-gradient text-white text-center">
+        <div class="card-header blue-gradient1 text-white text-center">
             <i class="fas fa-users"></i> Denunciante o Victima(s)
         </div>
         <div class="card-body">
@@ -287,7 +287,7 @@
 
     <!--Detalles del evento-->
     <div class="card mb-3">
-        <div class="card-header blue-gradient text-white text-center">
+        <div class="card-header blue-gradient1 text-white text-center">
             <i class="fas fa-map-marker-alt"></i> Detalles del evento
         </div>
         <div class="card-body">
@@ -368,7 +368,7 @@
 
     <!--Probable responsable-->
     <div class="card mb-3">
-        <div class="card-header blue-gradient text-white text-center">
+        <div class="card-header blue-gradient1 text-white text-center">
             <i class="fas fa-users"></i> Probable Responsable(s)
         </div>
         <div class="card-body">

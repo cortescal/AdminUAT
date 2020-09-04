@@ -54,3 +54,145 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+
+/*///////////////////////////nueva imagen*/
+
+.bg-dark {
+    background-color: black !important;
+}
+.btn-indigo {
+    background-color: #50545A !important;
+    color: #fff;
+}
+
+.md-form .prefix ~ input, .md-form .prefix ~ textarea:focus {
+    margin-left: 2.5rem;
+    width: calc(100% - 2.5rem);
+    box-shadow: 0 1px 0 #D2A502;
+}
+
+.md-form input[type=password]:focus:not([readonly]), .md-form input[type=email]:focus:not([readonly]), .md-form input[type=text]:focus:not([readonly]) {
+    box-shadow: 0 1px 0 0 #D2A502 !important;
+    border-bottom: 1px solid #D2A502 !important;
+}
+
+.md-form label.active {
+  color: #D2A502 !important;
+}
+
+
+.blue-gradient1 {
+    background-color: #50545A !important;
+}
+
+.border-success {
+    border-color: #D2A502 !important;
+}
+
+.btn-info {
+    background-color: #afafaf !important;
+    color: #fff;
+}
+
+table.table thead th {
+    border-top: none;
+    background-color: #50545A;
+}
+
+
+.btn-primary:not([disabled]):not(.disabled).active, .btn-primary:not([disabled]):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+    -webkit-box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+    background-color: #D2A502 !important;
+}
+
+.btn-primary, .btn-primary:active {
+    background-color: #B28510 !important;
+    color: #fff;
+    border-color: #B28510;
+}
+
+.badge-primary {
+    color: #fff;
+    background-color: #B28510;
+}
+
+
+.blue-gradient {
+    /*background: -webkit-linear-gradient(50deg,#45cafc,#303f9f) !important;
+    background: -o-linear-gradient(50deg,#45cafc,#303f9f) !important;*/
+     background: linear-gradient(to right, #B28510, #E1C253) !important;
+}
+
+.btnCorreo {
+    background-color: #D2A502;
+    border: none;
+    color: white
+}
+
+.btn-outline-dark {
+    background-color: #efefef !important;
+}
+
+
+
+.btn-primary.dropdown-toggle, .btn-primary.dropdown-toggle:hover {
+    background-color: #B28510 !important;
+}
+
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #D2A502;
+}
+
+.text-primary, .text-primary:focus{
+    color: #B28510 !important;
+}
+
+.text-muted {
+     color: black !important; 
+    
+}
+
+.border-primary {
+    border-color: #B28510 !important;
+}
+
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #D2A502;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+
+.badge-info {
+    background-color: gray !important;
+}
+
+
+.btn-outline-blue, .btn-outline-blue:hover, .btn-outline-blue:focus {
+    border: 2px solid #D2A502 !important;
+    background-color: transparent !important;
+    color: #B28510 !important;
+}
+
+
+.btn-secondary {
+    background-color: gray !important;
+    color: #fff;
+}
+
+a, a:hover, a:focus {
+    color :#50545A !important;
+}
+
+.custom-switch {
+    padding-left: 2.25rem;
+    color: #50545A !important;
+}
