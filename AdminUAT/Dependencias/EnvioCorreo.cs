@@ -114,7 +114,7 @@ namespace AdminUAT.Dependencias
                 <p>Si no funciona el acceso proporcionado anteriormente por favor ingrese el siguiente:</p>
                 <p>{5}valida-email/{3}/{4}</p>
                 <p>Una vez que aparezca el mensaje de confirmación, podrás continuar con tu denuncia.</p>
-                <p>Estamos para servirte en <b>Fiscalínea: 2-11-7900 extensión 2036:</b></p>
+                <p>Estamos para servirle en la línea telefónica <b>222-211-7900</b></p>
                 <p>
                 Te recordamos nuestro domicilio:<br/>
                 Boulevard “Héroes del 5 de Mayo” esquina con Avenida 31 Oriente<br/>
@@ -143,7 +143,7 @@ namespace AdminUAT.Dependencias
                 <p>En cumplimiento a lo dispuesto en los artículos 1, 7, 11, 15, 20, 37 y demás aplicables de la Ley de Protección de Datos Personales en Posesión de los Sujetos Obligados del Estado de Puebla y 3 fracción IV de las Políticas y Lineamientos de Observancia General para el Manejo, Tratamiento, Seguridad y Protección de Datos Personales del Estado emitido por la Comisión para el Acceso a la Información Pública y Protección de Datos Personales del Estado.</p>                
                 <p>Para consultar el Aviso de Protección de Datos Personales en su versión completa, te invitamos a consultar nuestro sitio web en www.fiscalia.puebla.gob.mx</p>
 
-                <p>Estamos para servirte en <b>Fiscalínea: 2-11-7900 extensión 2036:</b></p>
+                <p>Estamos para servirle en la línea telefónica <b>222-211-7900</b></p>
 
                 <p>
                 También estamos presentes en redes sociales:<br/>

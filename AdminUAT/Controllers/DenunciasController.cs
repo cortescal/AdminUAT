@@ -360,7 +360,7 @@ namespace AdminUAT.Controllers
                     <p>Estimado <b>{0}:</b></p>
                     <p>Este es el código de ratificación de tu denuncia, el cual sera solicitado por el Ministerio Público:</p>
                     <p><b>{1}</b></p>
-                    <p>Estamos para servirte en <b>Fiscalínea: 2-11-7900 extensión 2036:</b></p>
+                    <p>Estamos para servirle en la línea telefónica <b>222-211-7900</b></p>
                     <p>
                     Te recordamos nuestro domicilio:<br/>
                     Boulevard “Héroes del 5 de Mayo” esquina con Avenida 31 Oriente<br/>
@@ -406,7 +406,7 @@ namespace AdminUAT.Controllers
                     <p>Estimado <b>{0}:</b></p>
                     <p>Este es el código de ratificación de tu denuncia, el cual sera solicitado por el Ministerio Público:</p>
                     <p><b>{1}</b></p>
-                    <p>Estamos para servirte en <b>Fiscalínea: 2-11-7900 extensión 2036:</b></p>
+                    <p>Estamos para servirle en la línea telefónica <b>222-211-7900</b></p>
                     <p>
                     Te recordamos nuestro domicilio:<br/>
                     Boulevard “Héroes del 5 de Mayo” esquina con Avenida 31 Oriente<br/>

@@ -196,3 +196,7 @@ a, a:hover, a:focus {
     padding-left: 2.25rem;
     color: #50545A !important;
 }
+
+.font-weight-bold {
+    color: white;
+}

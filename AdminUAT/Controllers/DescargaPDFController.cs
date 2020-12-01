@@ -207,10 +207,13 @@ namespace AdminUAT.Controllers
                 table.AddCell("Escolaridad");
                 table.AddCell(denunciante.Escolaridad.Descripcion);
 
-                DireccionVictima dirVictima = denunciante.DireccionVictima.First(); 
-                table.AddCell("Domicilio");
-                table.AddCell(dirVictima.Calle + " " + dirVictima.NumExterior + ", " + dirVictima.NumInterior + "\nCol. " + dirVictima.Colonia.Nombre + "\nC.P. " + dirVictima.Colonia.CP + "\n" + dirVictima.Colonia.Municipio.Nombre +"\n" + dirVictima.Colonia.Municipio.Estado.Nombre + ", México");
-
+                var dirVictima = denuncia.DireccionDenuncia.First();
+                if(dirVictima!=null)
+                {
+                    table.AddCell("Domicilio");
+                    table.AddCell(dirVictima.Calle + " " + dirVictima.NumExterior + ", " + dirVictima.NumInterior + "\nCol. " + dirVictima.Colonia.Nombre + "\nC.P. " + dirVictima.Colonia.CP + "\n" + dirVictima.Colonia.Municipio.Nombre + "\n" + dirVictima.Colonia.Municipio.Estado.Nombre + ", México");
+                }
+                
                 table.AddCell("Telefono local");
                 table.AddCell(denunciante.TelFijo == ""? "********" : denunciante.TelFijo);
 
@@ -250,13 +253,18 @@ namespace AdminUAT.Controllers
                 cell.BackgroundColor = BaseColor.LightGray;
                 table.AddCell(cell);
 
-                if (victimas.Count > 0)
+                var vict = denuncia.Victima;
+
+                if (vict.Count > 0)
                 {
-                    foreach (var item in victimas)
+                    foreach (var item in vict)
                     {
                         String nombre = item.Nombre.ToUpper() + " " + item.PrimerApellido.ToUpper() + " " + item.SegundoApellido.ToUpper();
                         DireccionVictima dirVs = item.DireccionVictima.FirstOrDefault();
-                        table.AddCell("Nombre: " + nombre + ", Genero: " + item.Genero.Sexo + ", Fecha de nacimiento: " + item.FechaNacimiento.ToString("dd/MM/yyyy") + ", Escolaridad: " + item.Escolaridad.Descripcion + ", Estado: " + dirVs.Colonia.Municipio.Estado.Nombre + ", Municipio: " + dirVs.Colonia.Municipio.Nombre + ", Colonia: " + dirVs.Colonia.Nombre + ", Calle: " + dirVs.Calle + ", No. ext: " + dirVs.NumExterior + ", No. Int: " + dirVs.NumInterior + ", Cp: " + dirVs.Colonia.CP);
+                        if(dirVs!=null)
+                        {
+                            table.AddCell("Nombre: " + nombre + ", Genero: " + item.Genero.Sexo + ", Fecha de nacimiento: " + item.FechaNacimiento.ToString("dd/MM/yyyy") + ", Escolaridad: " + item.Escolaridad.Descripcion + ", Estado: " + dirVs.Colonia.Municipio.Estado.Nombre + ", Municipio: " + dirVs.Colonia.Municipio.Nombre + ", Colonia: " + dirVs.Colonia.Nombre + ", Calle: " + dirVs.Calle + ", No. ext: " + dirVs.NumExterior + ", No. Int: " + dirVs.NumInterior + ", Cp: " + dirVs.Colonia.CP);
+                        }
                     }                   
                 }
                 else
