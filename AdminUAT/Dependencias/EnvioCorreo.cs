@@ -52,13 +52,13 @@ namespace AdminUAT.Dependencias
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
                 */
-                email.From = new MailAddress("uat.fiscalia.puebla.7@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.8@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.7@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.8@gmail.com", "Fge.2020**");
 
                 smtp.Send(email);
                 email.Dispose();
@@ -74,13 +74,13 @@ namespace AdminUAT.Dependencias
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
                 */
-                email.From = new MailAddress("uat.fiscalia.puebla.8@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.9@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.8@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.9@gmail.com", "Fge.2020**");
 
                 smtp.Send(email);
                 email.Dispose();
@@ -100,19 +100,23 @@ namespace AdminUAT.Dependencias
         public void ConstruirBody(string nombre, long idDenuncia, string path)
         {
             string token = GeneraCodigo(idDenuncia);
-            var otherPath= "http://10.24.1.36:8099/";
+            var otherPath= "";
+            if (path == "http://www.fiscalia.puebla.gob.mx/")
+                otherPath = "http://10.24.1.36/";
+            else
+                otherPath = "http://www.fiscalia.puebla.gob.mx/";
             /*builder.HtmlBody*/
             builder = string.Format(
-@"<center><b>Fiscalía General del Estado de Puebla</b></center>
+                @"<center><b>Fiscalía General del Estado de Puebla</b></center>
                 <p>Estimado <b>{0}:</b></p>
                 <p>Con la recepción de este mensaje estamos validado tu correo electrónico, mismo que proporcionaste al iniciar tu denuncia con el número: </p>
                 <p><b>{1}</b></p>
                 <p>No olvides conservar este número en un lugar seguro, lo puedes necesitar posteriormente para la consulta de tu denuncia. </p>
                 <p>La presentación de tu denuncia consta de tres pasos: 1) Datos, 2) Lugar, 3) Delito. Hasta el momento sólo has realizado el primero, lo cual significa que tu denuncia aún está inconclusa y por tal motivo, no ha sido recibida en la agencia del Ministerio Público que corresponde.</p>
                 <p>Para que puedas continuar con el llenado de tu denuncia y concluirla, requerimos que nos confirmes la recepción del presente mensaje y que aceptas conocer tu folio. Para realizarlo, es necesario que utilices el siguiente vínculo haciendo clic sobre el mismo o copiarlo a la barra de dirección de tu navegador de internet: </p>
-                <p>{2}valida-email/{3}/{4}</p>
+                <p>{2}DenunciaEnLinea/pasouno/validaemail/{3}/{4}</p>
                 <p>Si no funciona el acceso proporcionado anteriormente por favor ingrese el siguiente:</p>
-                <p>{5}valida-email/{3}/{4}</p>
+                <p>{5}DenunciaEnLinea/pasouno/validaemail/{3}/{4}</p>
                 <p>Una vez que aparezca el mensaje de confirmación, podrás continuar con tu denuncia.</p>
                 <p>Estamos para servirle en la línea telefónica <b>222-211-7900</b></p>
                 <p>

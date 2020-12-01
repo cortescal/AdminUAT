@@ -38,8 +38,8 @@ namespace AdminUAT
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     //Configuration.GetConnectionString("localUATAdmin")));
-                    Configuration.GetConnectionString("LoginUAT_1.15")));
-                    //Configuration.GetConnectionString("LoginUAT"))); //produccion
+                    //Configuration.GetConnectionString("LoginUAT_1.15")));
+                    Configuration.GetConnectionString("LoginUAT"))); //produccion
                     //services.AddDefaultIdentity<IdentityUser>()
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -49,15 +49,15 @@ namespace AdminUAT
             services.AddDbContext<NewUatDbContext>(options =>
                 options.UseSqlServer(
                     //Configuration.GetConnectionString("localUAT")));
-                    Configuration.GetConnectionString("TestUAT_1.15")));
-                    //Configuration.GetConnectionString("NewUATPro48"))); //produccion
+                    //Configuration.GetConnectionString("TestUAT_1.15")));
+                    Configuration.GetConnectionString("NewUATPro48"))); //produccion
 
             services.AddDbContext<AgendaDbContext>(options =>
             options.UseSqlServer(
                 //Configuration.GetConnectionString("AgendaLocal")));
                 //Configuration.GetConnectionString("LocalAgenda")));
-                Configuration.GetConnectionString("AgendaUatTest_1.15"))); //Test
-                //Configuration.GetConnectionString("UATCitas_Produccion_1.48"))); //Produccion
+                //Configuration.GetConnectionString("AgendaUatTest_1.15"))); //Test
+                Configuration.GetConnectionString("UATCitas_Produccion_1.48"))); //Produccion
 
             //Add dependencias
             services.AddTransient<ISubProceso, SubProceso>();
