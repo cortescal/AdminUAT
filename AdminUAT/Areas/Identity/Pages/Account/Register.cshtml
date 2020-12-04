@@ -3,7 +3,8 @@
 @inject AdminUAT.Data.NewUatDbContext context
 
 @{ 
-    var fiscalias = new SelectList(context.Fiscalias.Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
+    var fiscaliasMp = new SelectList(context.Fiscalias.Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
+    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FGE").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
 }
 
 <h4 class="text-muted text-center"><i class="fas fa-user-plus"></i> Add usuario</h4>
@@ -15,17 +16,17 @@
     <div class="row">
         <div class="col-lg-4 col-md-4 col-sm-12">
             <label asp-for="Input.Nombre"></label>
-            <input asp-for="Input.Nombre" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();"/>
+            <input asp-for="Input.Nombre" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();" />
             <span asp-validation-for="Input.Nombre" class="text-danger"></span>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12">
             <label asp-for="Input.PrimerApellido"></label>
-            <input asp-for="Input.PrimerApellido" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();"/>
+            <input asp-for="Input.PrimerApellido" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();" />
             <span asp-validation-for="Input.PrimerApellido" class="text-danger"></span>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12">
             <label asp-for="Input.SegundoApellido"></label>
-            <input asp-for="Input.SegundoApellido" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();"/>
+            <input asp-for="Input.SegundoApellido" class="form-control border border-primary" onkeyup="javascript:this.value=this.value.toUpperCase();" />
             <span asp-validation-for="Input.SegundoApellido" class="text-danger"></span>
         </div>
     </div>
@@ -56,7 +57,7 @@
                 <option value="0">N/A</option>
                 @foreach (var item in ViewBag.urs)
                 {
-                    <option value="@item.Id">@item.Nombre</option>
+                <option value="@item.Id">@item.Nombre</option>
                 }
             </select>
             <span asp-validation-for="Input.UR" class="text-danger"></span>
@@ -66,9 +67,17 @@
     <div class="row" id="fiscEspecial">
         <div class="col-12 col-md">
             <label asp-for="Input.FiscaliaId"></label>
-            <select asp-for="Input.FiscaliaId" class="selectpicker form-control" data-live-search="true" 
+            <select asp-for="Input.FiscaliaId" class="selectpicker form-control" data-live-search="true"
                     data-style="btn-primary" asp-items="fiscalias"></select>
             <span asp-validation-for="Input.FiscaliaId"></span>
+        </div>
+    </div>
+    <div class="row" id="MpId">
+        <div class="col-12 col-md">
+            <label asp-for="Input.FiscaliaMpId"></label>
+            <select asp-for="Input.FiscaliaMpId" class="selectpicker form-control" data-live-search="true"
+                    data-style="btn-primary" asp-items="fiscaliasMp"></select>
+            <span asp-validation-for="Input.FiscaliaMpId"></span>
         </div>
     </div>
     <br />
@@ -86,19 +95,32 @@
 <script>
     $(document).ready(function () {
         $("#fiscEspecial").hide();
+        $("#MpId").hide();
     });
 
     $("#Input_Rol").on('change', function () {
         console.log(this.value);
-        if (this.value == 2 || this.value == 6) {
+        if (this.value == 2) {
+            $("#MpId").show();
+            $("#MpId").prop('required', true);
+            $("#fiscEspecial").hide();
+            $("#Input_FiscaliaId").prop('required', false);
+        }
+        else if (this.value == 6) {
             $("#fiscEspecial").show();
             $("#Input_FiscaliaId").prop('required', true);
+            $("#MpId").hide();
+            $("#MpId").prop('required', false);
         }
         else {
             $("#fiscEspecial").hide();
             $("#Input_FiscaliaId").val("");
             $("#Input_FiscaliaId").prop('required', false);
+            $("#MpId").hide();
+            $("#MpId").prop('required', false);
+            $("#MpId").val("");
         }
     });
+
 </script>
 }

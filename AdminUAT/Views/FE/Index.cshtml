@@ -4,25 +4,23 @@
 @inject AdminUAT.Data.NewUatDbContext context
 @{
     ViewData["Title"] = "Fiscal Especializado";
-    var fiscalias = new SelectList(context.Fiscalias.Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
+    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FGE").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
 }
-<form method="get" asp-area="" asp-controller="FE" asp-action="Index">
     <div class="row">
         <div class="col-12 col-md">
-            <input name="fecha" class="form-control" type="date" />
+            <input name="fecha" class="form-control" type="date" id="fecha"/>
         </div>
         <div class="col-12 col-md">
-            <input name="fecha2" class="form-control" type="date" />
+            <input name="fecha2" class="form-control" type="date" id="fecha2"/>
         </div>
         <div class="col-12 col-md">
             <select name="fiscalia" class="form-control" id="fisc"
                     data-style="btn-primary" asp-items="fiscalias"></select>
         </div>
         <div class="col-lg-1 col-md-2 col-sm-6">
-            <button type="submit" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
+            <button onclick="mostrarGrafica()" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
         </div>
     </div>
-</form>
 
 <div class="col-lg-5 col-md-5 col-sm-12 text-right p-2">
 
@@ -36,27 +34,26 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-12">
         <div class="row">
-            <div class="col-lg-6">
-                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
-                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
+            <div class="col-12">
+                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>          
             </div>
-            <div class="col-lg-6">
+            <div class="col-12">
                 <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
-                <canvas id="chartFis2" style="height:100px;width:200px;"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
             </div>
         </div>
         <br />
         <div class="row">
             <div class="col-12">
-                <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica a partir de 04/3/2019 al <span id="fechaAmp"></span></h6>
+                <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica <span id="fechaAmp2"></span> al <span id="fechaAmp"></span></h6>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6">
-                <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn2"></span></h6>
-                <canvas id="RegionalchartMP" style="height:160px;width:200px;"></canvas>
-            </div>
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn1"></span></h6>
                 <canvas id="chartMP" style="height:170px;width:200px;"></canvas>
             </div>
@@ -79,10 +76,6 @@
     </div>
 </div>
 
-<!--Auxiliar-->
-<input type="date" value="@ViewBag.fecha" id="fecha" hidden />
-<input type="date" value="@ViewBag.fecha2" id="fecha2" hidden />
-
 @section Scripts{
 <script>
     var contador = 0;
@@ -95,6 +88,14 @@
 
     $("#fisc").on("change", function () {
         fiscalia = $("#fisc").val();
+    });
+
+    $("#fecha").on("change", function () {
+        fecha = $("#fecha").val();
+    });
+
+    $("#fecha2").on("change", function () {
+        fecha = $("#fecha2").val();
     });
 
     if (fecha2 != "") {
@@ -206,7 +207,7 @@
                     data: {
                         labels: nombre,
                         datasets: [{
-                            label: 'Metropolitana',
+                            label: 'Sin Atender',
                             data: sinAtencion,
                             backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
                             borderColor: 'red',
@@ -231,62 +232,6 @@
             }
         });
 
-        //chart NOMBRE mp con el numero de denuncias sin atender [Fiscalia Regional]
-        $.ajax({
-            type: "GET",
-            url: "FE/RegionalChartMPRoot?fiscalia=" + fiscalia,
-            beforeSend: function () {
-                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
-            },
-            success: function (response) {
-                var data = response;
-                var nombre = new Array();
-                var sinAtencion = new Array();
-                var total = 0;
-
-
-                for (var i = 0; i < data.length; i++) {
-                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
-                    total = total + (data[i]['stock'] - data[i]['resuelto']);
-                }
-
-                document.getElementById('tn2').innerHTML = total;
-
-                var ctx = document.getElementById('RegionalchartMP').getContext('2d');
-
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: nombre,
-                        datasets: [{
-                            label: 'Regional',
-                            data: sinAtencion,
-                            backgroundColor: 'rgba(231, 0, 0, 0.3)',
-                            borderColor: 'red',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontSize: 8
-                                }
-                            }]
-                        }
-                    }
-                });
-
-            }
-
-        });
-
         //Cantidad de denuncias RECIBIDAS por fiscalia PASTEL
         $.ajax({
             type: "GET",
@@ -297,8 +242,8 @@
             success: function (response) {
                 var datos = response;
 
-                document.getElementById('t1').innerHTML = (datos['metro'] + datos['regional']);
-                document.getElementById('t2').innerHTML = (datos['metroSolucion'] + datos['regSolucion']);
+                document.getElementById('t1').innerHTML = datos['regional'];
+                document.getElementById('t2').innerHTML = datos['regSolucion'];
                 document.getElementById('cdi').innerHTML = datos['cdi'];
                 document.getElementById('constancia').innerHTML = datos['constancia'];
                 document.getElementById('archivo').innerHTML = datos['archivo'];
@@ -308,9 +253,9 @@
                 var myChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['Regional', 'Metropolitana'],
+                        labels: ['Atendidas', 'Sin atender'],
                         datasets: [{
-                            data: [datos['regional'], datos['metro']],
+                            data: [datos['regional'], datos['regSolucion']],
                             backgroundColor: ['rgba(0, 158, 255, 0.4)', 'rgba(0, 158, 255, 1)'],
                             borderWidth: 2
                         }]
@@ -325,31 +270,6 @@
                         }
                     }
                 });
-
-
-                var ctx2 = document.getElementById('chartFis2').getContext('2d');
-
-                var myChart = new Chart(ctx2, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Regional', 'Metropolitana'],
-                        datasets: [{
-                            data: [datos['regSolucion'], datos['metroSolucion']],
-                            backgroundColor: ['rgba(0, 188, 11, 0.4)', 'rgba(0, 188, 11, 1)'],
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
-                    }
-                });
-
             }
         });
 

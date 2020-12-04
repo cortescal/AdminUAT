@@ -260,7 +260,7 @@ namespace AdminUAT.Controllers
                 .Where(x => x.UserId == Guid.Parse(userId)).Select(x => x.FiscaliaId).FirstOrDefaultAsync();
 
                 json = await _context.MP
-                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis && x.UR.RegionId != 6)
+                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis)
                     .OrderByDescending(x => (x.Stock - x.Resuelto))
                     .ToListAsync();
 
@@ -277,54 +277,13 @@ namespace AdminUAT.Controllers
             var json = new List<MP>();
 
             json = await _context.MP
-                .Where(x => x.Activo == true && x.UR.RegionId != 6 && x.FiscaliaId==fiscalia)
+                .Where(x => x.Activo == true && x.FiscaliaId==fiscalia)
                 .OrderByDescending(x => (x.Stock - x.Resuelto))
                 .ToListAsync();
 
             return json;
             
 
-        }
-
-        //Denuncias por atender por AMP Regional
-        [Authorize(Roles = "FiscEsp, Root")]
-        [HttpGet("FE/RegionalChartMP")]
-        public async Task<IEnumerable<MP>> RegionalChartMP()
-        {
-            var userId = _userManager.GetUserId(User);
-            var json = new List<MP>();
-
-            if (User.IsInRole("Root"))
-            {
-                return json;
-            }
-            else
-            {
-                var rolFis = await _application.RolFiscalias.AsNoTracking()
-                    .Where(x => x.UserId == Guid.Parse(userId)).Select(x => x.FiscaliaId).FirstOrDefaultAsync();
-
-                json = await _context.MP
-                    .Where(x => x.Activo == true && x.UR.RegionId != 6 && x.FiscaliaId == rolFis)
-                    .OrderByDescending(x => (x.Stock - x.Resuelto))
-                    .ToListAsync();
-
-                return json;
-            }           
-        }
-
-        [Authorize(Roles = "FiscEsp, Root")]
-        [HttpGet("FE/RegionalChartMPRoot")]
-        public async Task<IEnumerable<MP>> RegionalChartMPRoot(Guid fiscalia)
-        {
-            var json = new List<MP>();
-
-            json = await _context.MP
-                .Where(x => x.Activo == true && x.UR.RegionId != 6 && x.FiscaliaId == fiscalia)
-                .OrderByDescending(x => (x.Stock - x.Resuelto))
-                .ToListAsync();
-
-            return json;
-            
         }
 
         [Authorize(Roles = "FiscEsp, Root")]
@@ -357,22 +316,19 @@ namespace AdminUAT.Controllers
 
                     var denuncias1 = await _context.Denuncia
                         .Include(x => x.MP)
-                            .ThenInclude(x => x.UR)
                         .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) &&
                             x.Paso == 3 && x.MPId != null && x.FiscaliaId == rolFis)
                         .ToListAsync();
 
-                    var regional1 = denuncias1.Where(x => x.MP.UR.RegionId != 6).Count();
-                    var metro1 = denuncias1.Where(x => x.MP.UR.RegionId == 6).Count();
+                    var regional1 = denuncias1.Count();
 
                     var aux1 = denuncias1.Where(x => x.SolucionId != null).ToList();
-                    var regSolucion1 = aux1.Where(x => x.MP.UR.RegionId != 6).Count();
-                    var metroSolucion1 = aux1.Where(x => x.MP.UR.RegionId == 6).Count();
+                    var regSolucion1 = aux1.Count();
                     var cdi1 = denuncias1.Where(x => x.SolucionId == 1).Count();
                     var constancia1 = denuncias1.Where(x => x.SolucionId == 2).Count();
                     var archivo1 = denuncias1.Where(x => x.SolucionId == 3).Count();
 
-                    return Ok(new { regional = regional1, metro = metro1, regSolucion = regSolucion1, metroSolucion = metroSolucion1, cdi = cdi1, constancia = constancia1, archivo = archivo1 });
+                    return Ok(new { regional = regional1, regSolucion = regSolucion1, cdi = cdi1, constancia = constancia1, archivo = archivo1 });
                 }
                 else
                 {
@@ -380,23 +336,20 @@ namespace AdminUAT.Controllers
 
                     var denuncias = await _context.Denuncia
                         .Include(x => x.MP)
-                            .ThenInclude(x => x.UR)
                          .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && x.FiscaliaId == rolFis)
                         .ToListAsync();
 
-                    var regional = denuncias.Where(x => x.MP.UR.RegionId != 6).Count();
-                    var metro = denuncias.Where(x => x.MP.UR.RegionId == 6).Count();
+                    var regional = denuncias.Count();
 
                     var aux = denuncias.Where(x => x.SolucionId != null).ToList();
-                    var regSolucion = aux.Where(x => x.MP.UR.RegionId != 6).Count();
-                    var metroSolucion = aux.Where(x => x.MP.UR.RegionId == 6).Count();
+                    var regSolucion = aux.Count();
 
                     var cdi = denuncias.Where(x => x.SolucionId == 1).Count();
                     var constancia = denuncias.Where(x => x.SolucionId == 2).Count();
                     var archivo = denuncias.Where(x => x.SolucionId == 3).Count();
 
-                    return Ok(new { regional = regional, metro = metro, regSolucion = regSolucion, 
-                        metroSolucion = metroSolucion, cdi = cdi, constancia = constancia, archivo = archivo });
+                    return Ok(new { regional = regional, regSolucion = regSolucion, 
+                         cdi = cdi, constancia = constancia, archivo = archivo });
                 }
             } 
         }
@@ -412,22 +365,26 @@ namespace AdminUAT.Controllers
 
                 var denuncias1 = await _context.Denuncia
                     .Include(x => x.MP)
-                        .ThenInclude(x => x.UR)
                     .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) &&
                         x.Paso == 3 && x.MPId != null && x.FiscaliaId == fiscalia)
                     .ToListAsync();
 
-                var regional1 = denuncias1.Where(x => x.MP.UR.RegionId != 6).Count();
-                var metro1 = denuncias1.Where(x => x.MP.UR.RegionId == 6).Count();
+                var regional1 = denuncias1.Count();
 
                 var aux1 = denuncias1.Where(x => x.SolucionId != null).ToList();
-                var regSolucion1 = aux1.Where(x => x.MP.UR.RegionId != 6).Count();
-                var metroSolucion1 = aux1.Where(x => x.MP.UR.RegionId == 6).Count();
+                var regSolucion1 = aux1.Count();
                 var cdi1 = denuncias1.Where(x => x.SolucionId == 1).Count();
                 var constancia1 = denuncias1.Where(x => x.SolucionId == 2).Count();
                 var archivo1 = denuncias1.Where(x => x.SolucionId == 3).Count();
 
-                return Ok(new { regional = regional1, metro = metro1, regSolucion = regSolucion1, metroSolucion = metroSolucion1, cdi = cdi1, constancia = constancia1, archivo = archivo1 });
+                return Ok(new 
+                { 
+                    regional = regional1, 
+                    regSolucion = regSolucion1, 
+                    cdi = cdi1, 
+                    constancia = constancia1, 
+                    archivo = archivo1 
+                });
             }
             else
             {
@@ -439,13 +396,10 @@ namespace AdminUAT.Controllers
                         .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && x.FiscaliaId == fiscalia)
                     .ToListAsync();
 
-                var regional = denuncias.Where(x => x.MP.UR.RegionId != 6).Count();
-                var metro = denuncias.Where(x => x.MP.UR.RegionId == 6).Count();
+                var regional = denuncias.Count();
 
                 var aux = denuncias.Where(x => x.SolucionId != null).ToList();
-                var regSolucion = aux.Where(x => x.MP.UR.RegionId != 6).Count();
-                var metroSolucion = aux.Where(x => x.MP.UR.RegionId == 6).Count();
-
+                var regSolucion = aux.Count();
                 var cdi = denuncias.Where(x => x.SolucionId == 1).Count();
                 var constancia = denuncias.Where(x => x.SolucionId == 2).Count();
                 var archivo = denuncias.Where(x => x.SolucionId == 3).Count();
@@ -453,9 +407,7 @@ namespace AdminUAT.Controllers
                 return Ok(new
                 {
                     regional = regional,
-                    metro = metro,
                     regSolucion = regSolucion,
-                    metroSolucion = metroSolucion,
                     cdi = cdi,
                     constancia = constancia,
                     archivo = archivo

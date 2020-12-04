@@ -88,6 +88,9 @@ namespace AdminUAT.Areas.Identity.Pages.Account
 
             [Display(Name = "Fiscalia Correspondiente")]
             public Guid? FiscaliaId { get; set; }
+            
+            [Display(Name = "Fiscalia Correspondiente")]
+            public Guid? FiscaliaMpId { get; set; }
         }
 
         public void OnGet(string returnUrl = null)
@@ -124,7 +127,7 @@ namespace AdminUAT.Areas.Identity.Pages.Account
                         Resuelto = 0,
                         AltaSistema = DateTime.Now,
                         URId = Input.UR,
-                        FiscaliaId=Input.FiscaliaId
+                        FiscaliaId=Input.FiscaliaMpId
                     };
 
                     _contextUAT.Add(obj);
