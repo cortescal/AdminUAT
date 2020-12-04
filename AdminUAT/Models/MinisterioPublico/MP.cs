@@ -1,6 +1,7 @@
 ﻿using AdminUAT.Models.Denuncias;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdminUAT.Models.MinisterioPublico
 {
@@ -17,7 +18,13 @@ namespace AdminUAT.Models.MinisterioPublico
 
         public long URId { get; set; }
 
+        public Guid? FiscaliaId { get; set; }
+
         public UR UR { get; set; }
+
+        [ForeignKey("FiscaliaId")]
+        public Fiscalia Fiscalia { get; set; }
+
         public ICollection<Denuncia> Denuncia { get; set; }
     }
 }

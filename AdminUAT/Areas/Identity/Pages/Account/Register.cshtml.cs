@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using AdminUAT.Data;
 using System.Linq;
 using AdminUAT.Models.MinisterioPublico;
+using AdminUAT.Models.LoginUat;
 
 namespace AdminUAT.Areas.Identity.Pages.Account
 {
@@ -26,19 +27,18 @@ namespace AdminUAT.Areas.Identity.Pages.Account
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly NewUatDbContext _contextUAT;
 
-        public RegisterModel(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger,
-            RoleManager<IdentityRole> roleManager,
-            NewUatDbContext contextUAT
-            )
+        private readonly ApplicationDbContext _context;
+
+        public RegisterModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
+            ILogger<RegisterModel> logger, RoleManager<IdentityRole> roleManager, NewUatDbContext contextUAT,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _roleManager = roleManager;
             _contextUAT = contextUAT;
+            _context = context;
         }
 
         [BindProperty]
@@ -85,6 +85,9 @@ namespace AdminUAT.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "El campo es Requerido")]
             [Display(Name = "UR")]
             public long UR { get; set; }
+
+            [Display(Name = "Fiscalia Correspondiente")]
+            public Guid? FiscaliaId { get; set; }
         }
 
         public void OnGet(string returnUrl = null)
@@ -98,7 +101,14 @@ namespace AdminUAT.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, Nombre = Input.Nombre, PrimerApellido = Input.PrimerApellido, SegundoApellido = Input.SegundoApellido };
+                var user = new ApplicationUser 
+                    { 
+                        UserName = Input.Email, 
+                        Email = Input.Email, 
+                        Nombre = Input.Nombre, 
+                        PrimerApellido = Input.PrimerApellido, 
+                        SegundoApellido = Input.SegundoApellido 
+                    };
                 user.AltaSistema = DateTime.Now;
                 user.Estatus = true;
                 user.Rol = Input.Rol;
@@ -113,7 +123,8 @@ namespace AdminUAT.Areas.Identity.Pages.Account
                         Stock = 0,
                         Resuelto = 0,
                         AltaSistema = DateTime.Now,
-                        URId = Input.UR
+                        URId = Input.UR,
+                        FiscaliaId=Input.FiscaliaId
                     };
 
                     _contextUAT.Add(obj);
@@ -136,6 +147,7 @@ namespace AdminUAT.Areas.Identity.Pages.Account
                     else if (user.Rol == 3) { nombreRol = "FiscReg"; }
                     else if (user.Rol == 4) { nombreRol = "FiscMet"; }
                     else if (user.Rol == 5) { nombreRol = "AEI"; }
+                    else if (user.Rol == 6) { nombreRol = "FiscEsp"; }
 
                     await _roleManager.CreateAsync(new IdentityRole(nombreRol));
                     await _userManager.AddToRoleAsync(user, nombreRol);
@@ -145,6 +157,18 @@ namespace AdminUAT.Areas.Identity.Pages.Account
 
                     //await _signInManager.SignInAsync(user, isPersistent: false);
                     //return LocalRedirect(returnUrl);
+                    if (user.Rol == 6)
+                    {
+                        var data = await _userManager.FindByEmailAsync(user.Email);
+                        var obj = new RolFiscalia() {
+                            UserId = Guid.Parse(data.Id),
+                            FiscaliaId=Input.FiscaliaId
+                        };
+
+                        await _context.RolFiscalias.AddAsync(obj);
+                        await _context.SaveChangesAsync();
+                    }
+
                     return LocalRedirect("~/Usuarios");
                 }
                 foreach (var error in result.Errors)

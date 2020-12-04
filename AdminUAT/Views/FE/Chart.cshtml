@@ -1,0 +1,350 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Fiscal Especializado";
+}
+
+<form method="get" asp-area="" asp-controller="FE" asp-action="Chart">
+    <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <input name="fecha" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <input name="fecha2" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-1 col-md-2 col-sm-6">
+            <button type="submit" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
+        </div>
+    </div>
+</form>
+
+<div class="col-lg-5 col-md-5 col-sm-12 text-right p-2">
+
+</div>
+<div id="alerta"></div>
+<hr />
+<h5 class="text-muted text-center">Denuncias Fiscalia <small id="f" class="text-center"></small> </h5>
+<br />
+
+<!--Propuesta de DOM-->
+<div class="row">
+    <div class="col-lg-8 col-md-8 col-sm-12">
+        <div class="row">
+            <div class="col-lg-6">
+                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
+                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
+            </div>
+            <div class="col-lg-6">
+                <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
+                <canvas id="chartFis2" style="height:100px;width:200px;"></canvas>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-12">
+                <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica a partir de 04/3/2019 al <span id="fechaAmp"></span></h6>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn2"></span></h6>
+                <canvas id="RegionalchartMP" style="height:160px;width:200px;"></canvas>
+            </div>
+            <div class="col-lg-6">
+                <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn1"></span></h6>
+                <canvas id="chartMP" style="height:170px;width:200px;"></canvas>
+            </div>
+        </div>
+        <div class="row text-muted text-center border border-primary rounded-pill">
+            <div class="col-lg-4">
+                <i><b>CDI: <span id="cdi"></span></b></i>
+            </div>
+            <div class="col-lg-4">
+                <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
+            </div>
+            <div class="col-lg-4">
+                <i><b>Archivo: <span id="archivo"></span></b></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <h6 class="border border-primary text-center rounded-pill">Desglose por origen <small id="d"></small></h6>
+        <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
+    </div>
+</div>
+
+<!--Auxiliar-->
+<input type="date" value="@ViewBag.fecha" id="fecha" hidden />
+<input type="date" value="@ViewBag.fecha2" id="fecha2" hidden />
+
+@section Scripts{
+<script>
+    var contador = 0;
+    var f = new Date();
+    $("#fechaAmp").html(f.toLocaleDateString()); //fecha amp
+
+    var fecha = $("#fecha").val();
+    var fecha2 = $("#fecha2").val();
+
+    if (fecha2 != "") {
+        if (fecha > fecha2) {
+            document.getElementById('alerta').innerHTML = '<div class="row"><span class="col-12 alert alert-danger text-center">La primer fecha no puede ser mayor. Busqueda ' + fecha + ' a ' + fecha2 + '</span></div>';
+        }
+        else if (fecha === "" && fecha2 !== "") {
+            document.getElementById('alerta').innerHTML = '<div class="row"><span class="col-12 alert alert-danger text-center">No selecciono la primer fecha</span></div>';
+        }
+    }
+
+    mostrarGrafica();
+    function mostrarGrafica() {
+        $.ajax({
+            type: "GET",
+            url: "FE/JsonData?fecha=" + fecha + "&fecha2=" + fecha2,
+            success: function (response) {
+                var data = response;
+                var nom = new Array();
+                var recibidas = new Array();
+                var atendidas = new Array();
+                var totalR = 0;
+                var totalA = 0;
+
+                var parts = data[0]['fecha'].split('-');
+                var mydate = new Date(parts[0], parts[1] - 1, parts[2]);
+                var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+                var parts2 = fecha2.split('-');
+                var mydate2 = new Date(parts2[0], parts2[1] - 1, parts2[2]);
+
+                $("#f").html(mydate.toLocaleDateString("es-ES", options)); //FECHA
+                if (fecha2 != "") { $("#f").append(' al ' + mydate2.toLocaleDateString("es-ES", options)) }
+
+                for (var i = 0; i < data.length; i++) {
+                    nom.push(data[i]['kiosco']);
+                    recibidas.push(data[i]['recibidas']);
+                    atendidas.push(data[i]['atendidas']);
+
+                    totalR = totalR + data[i]['recibidas'];
+                    totalA = totalA + data[i]['atendidas'];
+                }
+
+                var ctx = document.getElementById('myChart').getContext('2d');
+
+                document.getElementById('d').innerHTML = " R=" + totalR + " A=" + totalA;
+                var dr = {
+                    label: 'Recibidas',
+                    data: recibidas,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 3
+                };
+
+                var da = {
+                    label: 'Atendidas',
+                    data: atendidas,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 3
+                };
+
+                var datos = {
+                    labels: nom,
+                    datasets: [dr, da]
+                };
+
+                var chartOptions = {
+                    scales: {
+
+                    }
+                };
+
+                window.myChart = new Chart(ctx, {
+                    type: 'horizontalBar',
+                    data: datos,
+                    options: chartOptions
+                });
+            }
+        });
+
+        //chart de NOMBRE mp con el numero de denuncias sin atender [Fiscalia Metropolitana]
+        $.ajax({
+            type: "GET",
+            url: "FE/ChartMP",
+            beforeSend: function () {
+                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
+            },
+            success: function (response) {
+                var data = response;
+                var nombre = new Array();
+                var sinAtencion = new Array();
+                var total = 0;
+
+                for (var i = 0; i < data.length; i++) {
+                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
+                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
+                    total = total + (data[i]['stock'] - data[i]['resuelto']);
+                }
+
+                document.getElementById('tn1').innerHTML = total;
+
+                var ctx = document.getElementById('chartMP').getContext('2d');
+
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: nombre,
+                        datasets: [{
+                            label: 'Metropolitana',
+                            data: sinAtencion,
+                            backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'red',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 7
+                                }
+                            }]
+                        }
+                    }
+                });
+
+            }
+
+        });
+
+        //chart NOMBRE mp con el numero de denuncias sin atender [Fiscalia Regional]
+        $.ajax({
+            type: "GET",
+            url: "FE/RegionalChartMP",
+            beforeSend: function () {
+                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
+            },
+            success: function (response) {
+                var data = response;
+                var nombre = new Array();
+                var sinAtencion = new Array();
+                var total = 0;
+
+
+                for (var i = 0; i < data.length; i++) {
+                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
+                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
+                    total = total + (data[i]['stock'] - data[i]['resuelto']);
+                }
+
+                document.getElementById('tn2').innerHTML = total;
+
+                var ctx = document.getElementById('RegionalchartMP').getContext('2d');
+
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: nombre,
+                        datasets: [{
+                            label: 'Regional',
+                            data: sinAtencion,
+                            backgroundColor: 'rgba(231, 0, 0, 0.3)',
+                            borderColor: 'red',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 8
+                                }
+                            }]
+                        }
+                    }
+                });
+
+            }
+
+        });
+
+        //Cantidad de denuncias RECIBIDAS por fiscalia PASTEL
+        $.ajax({
+            type: "GET",
+            url: "FE/Regional?fecha=" + fecha + "&fecha2=" + fecha2,
+            beforeSend: function () {
+                //$("#chartFisLoad").html('<div class="py-5 text-center text-muted"><p><i class="far fa-hourglass fa-spin fa-2x text-muted"></i></p><p>Cargando...</p></div>');
+            },
+            success: function (response) {
+                var datos = response;
+
+                document.getElementById('t1').innerHTML = (datos['metro'] + datos['regional']);
+                document.getElementById('t2').innerHTML = (datos['metroSolucion'] + datos['regSolucion']);
+                document.getElementById('cdi').innerHTML = datos['cdi'];
+                document.getElementById('constancia').innerHTML = datos['constancia'];
+                document.getElementById('archivo').innerHTML = datos['archivo'];
+
+                var ctx = document.getElementById('chartFis').getContext('2d');
+
+                var myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Regional', 'Metropolitana'],
+                        datasets: [{
+                            data: [datos['regional'], datos['metro']],
+                            backgroundColor: ['rgba(0, 158, 255, 0.4)', 'rgba(0, 158, 255, 1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+
+                var ctx2 = document.getElementById('chartFis2').getContext('2d');
+
+                var myChart = new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Regional', 'Metropolitana'],
+                        datasets: [{
+                            data: [datos['regSolucion'], datos['metroSolucion']],
+                            backgroundColor: ['rgba(0, 188, 11, 0.4)', 'rgba(0, 188, 11, 1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+
+            }
+        });
+
+        contador = contador + 1;
+    }
+    setInterval("mostrarGrafica()", 600000);
+</script>
+ }

@@ -5,6 +5,7 @@ using AdminUAT.Models.Victimas;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdminUAT.Models.Denuncias
 {
@@ -31,10 +32,19 @@ namespace AdminUAT.Models.Denuncias
         public long? DelitoId { get; set; }
         public long BitaKioscoId { get; set; }
 
+        public Guid? FiscaliaId { get; set; }
+        public Guid? FiscaliaCorrespondienteId { get; set; }
+
         public MP MP { get; set; }
         public Solucion Solucion { get; set; }
         public Danio Danio { get; set; }
         public Delito Delito { get; set; }
+
+        [ForeignKey("FiscaliaId")]
+        public Fiscalia Fiscalia { get; set; }
+        [ForeignKey("FiscaliaCorrespondienteId")]
+        public Fiscalia FiscaliaCorrespondiente { get; set; }
+
         public ICollection<Victima> Victima { get; set; }
         public ICollection<Responsable> Responsable { get; set; }
         public ICollection<DireccionDenuncia> DireccionDenuncia { get; set; }

@@ -36,5 +36,8 @@ namespace AdminUAT.Data
         public DbSet<DireccionDenuncia> DireccionDenuncia { get; set; }
         public DbSet<Colonia> Colonia { get; set; }
         public DbSet<Municipio> Municipio { get; set; }
+
+         //Fiscalias
+        public DbSet<Fiscalia> Fiscalias { get; set; }
     }
 }

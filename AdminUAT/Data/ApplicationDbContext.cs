@@ -1,5 +1,6 @@
 ﻿using AdminUAT.Models;
 using AdminUAT.Models.AdminUat;
+using AdminUAT.Models.LoginUat;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -31,5 +32,7 @@ namespace AdminUAT.Data
         public DbSet<SeguimientoSoporte> SeguimientoSoporte { get; set; }
         public DbSet<TipoSoporte> TipoSoporte { get; set; }
         public DbSet<Token> Token { get; set; }
+
+        public DbSet<RolFiscalia> RolFiscalias { get; set; }
     }
 }

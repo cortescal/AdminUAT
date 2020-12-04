@@ -29,7 +29,7 @@ namespace AdminUAT.Controllers
         public IActionResult Index()
         {
             var query = _context.Users
-                .OrderByDescending(x => x.Rol)
+                .OrderBy(x=>x.Nombre)
                 .ToList();
 
             return View(query);

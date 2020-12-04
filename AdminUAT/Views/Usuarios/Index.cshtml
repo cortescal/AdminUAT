@@ -24,63 +24,69 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>@item.Nombre @item.PrimerApellido @item.SegundoApellido</td>
-                    <td>@item.UserName</td>
-                    @if (item.Rol == 1)
-                    {
-                        <td><span class="badge badge-dark">Root</span></td>
-                    }
-                    else if (item.Rol == 2)
-                    {
-                        <td><span class="badge badge-primary">MP</span></td>
-                    }
-                    else if (item.Rol == 3)
-                    {
-                        <td><span class="badge badge-warning">FR</span></td>
-                    }
-                    else if (item.Rol == 4)
-                    {
-                        <td><span class="badge badge-success">FM</span></td>
-                    }
-                    else if (item.Rol == 5)
-                    {
-                        <td><span class="badge badge-info">AEI</span></td>
-                    }
-                    else
-                    {
-                        <td><span class="badge badge-danger">Sin Rol</span></td>
-                    }
+            <tr>
+                <td>@item.Nombre @item.PrimerApellido @item.SegundoApellido</td>
+                <td>@item.UserName</td>
+                @if (item.Rol == 1)
+                {
+                    <td><span class="badge badge-dark">Root</span></td>
+                }
+                else if (item.Rol == 2)
+                {
+                    <td><span class="badge badge-primary">MP</span></td>
+                }
+                else if (item.Rol == 3)
+                {
+                    <td><span class="badge badge-warning">FR</span></td>
+                }
+                else if (item.Rol == 4)
+                {
+                    <td><span class="badge badge-success">FM</span></td>
+                }
+                else if (item.Rol == 5)
+                {
+                    <td><span class="badge badge-info">AEI</span></td>
+                }
+                else if (item.Rol == 6)
+                {
+                    <td><span class="badge badge-danger">FE</span></td>
+                }
+                else
+                {
+                    <td><span class="badge badge-danger">Sin Rol</span></td>
+                }
 
-                    @if (@item.Estatus == true)
-                    {
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-check fa-lg" style="color: green;"></i></a>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-times fa-lg" style="color: red;"></i></a>
-                        </td>
-                    }
-
-                    @if (item.LockoutEnabled == true)
-                    {
-                        <td><b class="text-success">@item.LockoutEnabled - @item.AccessFailedCount</b></td> }
-                    else
-                    {
-                        <td><b class="text-success">@item.LockoutEnabled - @item.AccessFailedCount</b></td>}
-
-                    <td><a asp-action="ResetPass" asp-route-id="@item.Id"><i class="fas fa-sync-alt"></i></a></td>
-                    <td>@item.AltaSistema</td>
+                @if (@item.Estatus == true)
+                {
                     <td>
-                        @if (item.Rol == 2)
-                        { 
-                        <a asp-action="" data-toggle="modal" data-target=".bd-example-modal-xl" onclick="detailsDenuncia('@item.MatchMP','Usuarios/Details')"><i class="fas fa-info-circle"></i></a>
-                        }
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-check fa-lg" style="color: green;"></i></a>
                     </td>
-                </tr>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fa fa-times fa-lg" style="color: red;"></i></a>
+                    </td>
+                }
+
+                @if (item.LockoutEnabled == true)
+                {
+                    <td><b class="text-success">@item.LockoutEnabled - @item.AccessFailedCount</b></td>
+ }
+                else
+                {
+                    <td><b class="text-success">@item.LockoutEnabled - @item.AccessFailedCount</b></td>
+}
+
+                <td><a asp-action="ResetPass" asp-route-id="@item.Id"><i class="fas fa-sync-alt"></i></a></td>
+                <td>@item.AltaSistema</td>
+                <td>
+                    @if (item.Rol == 2)
+                    {
+                        <a asp-action="" data-toggle="modal" data-target=".bd-example-modal-xl" onclick="detailsDenuncia('@item.MatchMP','Usuarios/Details')"><i class="fas fa-info-circle"></i></a>
+                    }
+                </td>
+            </tr>
             }
         </tbody>
     </table>

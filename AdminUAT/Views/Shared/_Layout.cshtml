@@ -63,6 +63,7 @@
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" asp-area="" asp-controller="Chart" asp-action="Index">Global</a>
+                                        <a class="dropdown-item" asp-area="" asp-controller="FE" asp-action="Chart">Fiscal Especializado</a>
                                         <a class="dropdown-item" asp-area="" asp-controller="FM" asp-action="Chart">Fiscal Metropolitano</a>
                                         <a class="dropdown-item" asp-area="" asp-controller="FR" asp-action="Chart">Fiscal Regional</a>
                                         <a class="dropdown-item" asp-area="" asp-controller="Root" asp-action="EstadisticaObjetivo">Objetivos UAT@@</a>
@@ -115,6 +116,16 @@
                                     <a class="nav-link text-white" asp-area="" asp-controller="FM" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
                                 </li>
                             }
+                            
+                            else if (User.IsInRole("FiscEsp"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-archive"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="FE" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
+                                </li>
+                            }
                             else if (User.IsInRole("AEI"))
                             {
                                 <li class="nav-item">
@@ -131,7 +142,8 @@
                                 </li>
                             }
 
-                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || User.IsInRole("FiscMet") || User.IsInRole("FiscReg"))
+                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || 
+                                User.IsInRole("FiscMet") || User.IsInRole("FiscReg") || User.IsInRole("FiscEsp"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="AdminSoportes" asp-action="index"><i class="far fa-comment-alt"></i></a>
