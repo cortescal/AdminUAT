@@ -18,7 +18,7 @@
                     data-style="btn-primary" asp-items="fiscalias"></select>
         </div>
         <div class="col-lg-1 col-md-2 col-sm-6">
-            <button onclick="mostrarGrafica()" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
+            <button onclick="mostrarGrafica()" class="btn btn-outline-dark form-control" id="send"><i class="fa fa-search"></i></button>
         </div>
     </div>
 
@@ -95,7 +95,11 @@
     });
 
     $("#fecha2").on("change", function () {
-        fecha = $("#fecha2").val();
+        fecha2 = $("#fecha2").val();
+    });
+
+    $("#send").click(function (e) {
+        e.preventDefault();
     });
 
     if (fecha2 != "") {

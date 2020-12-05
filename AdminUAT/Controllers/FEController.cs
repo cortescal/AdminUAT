@@ -66,7 +66,7 @@ namespace AdminUAT.Controllers
 
             var userId = _userManager.GetUserId(User);
 
-            if (fecha2 != "" && fecha2 != null)
+            if (fecha != null && fecha2 != null)
             {
                 json = await JsonData2(fecha, fecha2, userId);
                 return json.OrderByDescending(x => x.Recibidas);
@@ -119,7 +119,7 @@ namespace AdminUAT.Controllers
         {
             List<MapaData> json = new List<MapaData>();
 
-            if (fecha2 != "" && fecha2 != null)
+            if (fecha != null && fecha2 != null)
             {
                 json = await JsonData2Root(fecha, fecha2, fiscalia);
                 return json.OrderByDescending(x => x.Recibidas);
@@ -309,7 +309,7 @@ namespace AdminUAT.Controllers
                 var rolFis = await _application.RolFiscalias.AsNoTracking()
                         .Where(x => x.UserId == Guid.Parse(userId)).Select(x => x.FiscaliaId).FirstOrDefaultAsync();
 
-                if (fecha2 != "" && fecha2 != null)
+                if (fecha != null && fecha2 != null)
                 {
                     DateTime fechaI = Convert.ToDateTime(fecha);
                     DateTime fechaF = Convert.ToDateTime(fecha2);
@@ -358,7 +358,7 @@ namespace AdminUAT.Controllers
         [HttpGet("FE/RegionalRoot")]
         public async Task<IActionResult> RegionalRoot(string fecha, string fecha2,Guid fiscalia)
         {
-            if (fecha2 != "" && fecha2 != null)
+            if (fecha != null && fecha2 != null)
             {
                 DateTime fechaI = Convert.ToDateTime(fecha);
                 DateTime fechaF = Convert.ToDateTime(fecha2);
