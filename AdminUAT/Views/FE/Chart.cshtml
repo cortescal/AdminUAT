@@ -137,7 +137,8 @@
                         data: recibidas,
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 3
+                        borderWidth: 3,
+                        hoverBorderWidth: 0
                     };
 
                     var da = {
@@ -145,7 +146,8 @@
                         data: atendidas,
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
                         borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 3
+                        borderWidth: 3,
+                        hoverBorderWidth: 0
                     };
 
                     var datos = {
@@ -178,12 +180,14 @@
                     var data = response;
                     var nombre = new Array();
                     var sinAtencion = new Array();
+                    var atendidas = new Array();
                     var total = 0;
 
                     for (var i = 0; i < data.length; i++) {
                         nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
                         sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
                         total = total + (data[i]['stock'] - data[i]['resuelto']);
+                        atendidas.push(data[i]['resuelto']);
                     }
 
                     document.getElementById('tn1').innerHTML = total;
@@ -195,6 +199,12 @@
                         data: {
                             labels: nombre,
                             datasets: [{
+                                label: 'Atendidas',
+                                data: atendidas,
+                                backgroundColor: 'rgba(255, 215, 0,0.3)',//'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'yellow',
+                                borderWidth: 2
+                            },{
                                 label: 'Sin Atender',
                                 data: sinAtencion,
                                 backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',

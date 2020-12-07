@@ -150,7 +150,7 @@
                                 </li>
                             }
 
-                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || User.IsInRole("FiscMet") || User.IsInRole("FiscReg"))
+                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || User.IsInRole("FiscMet") || User.IsInRole("FiscReg") || User.IsInRole("FiscEsp"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="AdminSoportes" asp-action="index"><i class="far fa-comment-alt"></i></a>

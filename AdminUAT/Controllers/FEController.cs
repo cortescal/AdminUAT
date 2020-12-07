@@ -97,16 +97,19 @@ namespace AdminUAT.Controllers
                         .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha &&
                         x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == rolFis).CountAsync();
 
-                    var obj = new MapaData
+                    if (recibidas > 0 || atendidas > 0)
                     {
-                        Kiosco = item.Nombre,
+                        var obj = new MapaData
+                        {
+                            Kiosco = item.Nombre,
 
-                        Fecha = fecha,
-                        Recibidas = recibidas,
-                        Atendidas = atendidas
-                    };
+                            Fecha = fecha,
+                            Recibidas = recibidas,
+                            Atendidas = atendidas
+                        };
 
-                    json.Add(obj);
+                        json.Add(obj);
+                    }
                 }
             }       
 
@@ -141,19 +144,20 @@ namespace AdminUAT.Controllers
                     .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha &&
                     x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia).CountAsync();
 
-                var obj = new MapaData
+                if(recibidas>0||atendidas>0)
                 {
-                    Kiosco = item.Nombre,
+                    var obj = new MapaData
+                    {
+                        Kiosco = item.Nombre,
 
-                    Fecha = fecha,
-                    Recibidas = recibidas,
-                    Atendidas = atendidas
-                };
+                        Fecha = fecha,
+                        Recibidas = recibidas,
+                        Atendidas = atendidas
+                    };
 
-                json.Add(obj);
+                    json.Add(obj);
+                }  
             }
-            
-
             return json.OrderByDescending(x => x.Recibidas);
         }
 
@@ -189,16 +193,19 @@ namespace AdminUAT.Controllers
                         .Where(x => x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date &&
                         x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == rolFis).CountAsync();
 
-                    var obj = new MapaData
+                    if (recibidas > 0 || atendidas > 0)
                     {
-                        Kiosco = item.Nombre,
+                        var obj = new MapaData
+                        {
+                            Kiosco = item.Nombre,
 
-                        Fecha = fecha,
-                        Recibidas = recibidas,
-                        Atendidas = atendidas
-                    };
+                            Fecha = fecha,
+                            Recibidas = recibidas,
+                            Atendidas = atendidas
+                        };
 
-                    json.Add(obj);
+                        json.Add(obj);
+                    }
                 }
             }
             return json;
@@ -225,16 +232,19 @@ namespace AdminUAT.Controllers
                     .Where(x => x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date &&
                     x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia).CountAsync();
 
-                var obj = new MapaData
+                if (recibidas > 0 || atendidas > 0)
                 {
-                    Kiosco = item.Nombre,
+                    var obj = new MapaData
+                    {
+                        Kiosco = item.Nombre,
 
-                    Fecha = fecha,
-                    Recibidas = recibidas,
-                    Atendidas = atendidas
-                };
+                        Fecha = fecha,
+                        Recibidas = recibidas,
+                        Atendidas = atendidas
+                    };
 
-                json.Add(obj);
+                    json.Add(obj);
+                }
             }
             
             return json;
