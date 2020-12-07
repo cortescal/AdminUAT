@@ -316,9 +316,25 @@ namespace AdminUAT.Controllers
                 }
                 else
                 {
+                    string nombre = "*****";
+                    string paternal ="*****";
+                    string maternal = "*****";
                     foreach (var item in denuncia.Responsable)
                     {
-                        String nombre = item.Nombre.ToUpper() + " " + item.PrimerApellido.ToUpper() + " " + item.SegundoApellido.ToUpper();
+                        if(item.Nombre!=null)
+                        {
+                            nombre = item.Nombre.ToUpper();
+                        }
+                        if(item.PrimerApellido!=null)
+                        {
+                            paternal = item.PrimerApellido.ToUpper();
+                        }
+                        if(item.SegundoApellido!=null)
+                        {
+                            maternal = item.SegundoApellido.ToUpper();
+                        }
+                        nombre = nombre + " " + paternal + " " + maternal;
+                        
                         DireccionResponsable dirR = item.DireccionResponsable.FirstOrDefault();
                         DescResponsable descR = item.DescResponsable.FirstOrDefault();
 
