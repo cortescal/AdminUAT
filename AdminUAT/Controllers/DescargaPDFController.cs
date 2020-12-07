@@ -317,7 +317,7 @@ namespace AdminUAT.Controllers
                 else
                 {
                     string nombre = "*****";
-                    string paternal ="*****";
+                    string paternal = "*****";
                     string maternal = "*****";
                     foreach (var item in denuncia.Responsable)
                     {
