@@ -316,15 +316,31 @@ namespace AdminUAT.Controllers
                 }
                 else
                 {
+                    string nombre = "*****";
+                    string paternal = "*****";
+                    string maternal = "*****";
                     foreach (var item in denuncia.Responsable)
                     {
-                        String nombre = item.Nombre.ToUpper() + " " + item.PrimerApellido.ToUpper() + " " + item.SegundoApellido.ToUpper();
+                        if (item.Nombre != null)
+                        {
+                            nombre = item.Nombre.ToUpper();
+                        }
+                        if (item.PrimerApellido != null)
+                        {
+                            paternal = item.PrimerApellido.ToUpper();
+                        }
+                        if (item.SegundoApellido != null)
+                        {
+                            maternal = item.SegundoApellido.ToUpper();
+                        }
+                        nombre = nombre + " " + paternal + " " + maternal;
+
                         DireccionResponsable dirR = item.DireccionResponsable.FirstOrDefault();
                         DescResponsable descR = item.DescResponsable.FirstOrDefault();
 
-                        string dirText = dirR == null? "": ", Estado: " + dirR.Colonia.Municipio.Estado.Nombre + ", Municipio: " + dirR.Colonia.Municipio.Nombre + ", Colonia: " + dirR.Colonia.Nombre + ", Calle: " + dirR.Calle + ", No. ext: " + dirR.NumExterior + ", No. Int: " + dirR.NumInterior + ", Cp: " + dirR.Colonia.CP;
-                        string descText = descR == null ? "": ", Color de piel: " + descR.ColorPiel + ", Altura: " + descR.Altura.ToString() + ", Tipo de cabello: " + descR.TipoCabello + ", Color de cabello: " + descR.ColorCabello + ", Color de ojos: " + descR.ColorOjos + ", Complexión: " + descR.Complexion + ", Tatuajes: " + (descR.Tatuajes == true? "SI" : "NO");
-                        
+                        string dirText = dirR == null ? "" : ", Estado: " + dirR.Colonia.Municipio.Estado.Nombre + ", Municipio: " + dirR.Colonia.Municipio.Nombre + ", Colonia: " + dirR.Colonia.Nombre + ", Calle: " + dirR.Calle + ", No. ext: " + dirR.NumExterior + ", No. Int: " + dirR.NumInterior + ", Cp: " + dirR.Colonia.CP;
+                        string descText = descR == null ? "" : ", Color de piel: " + descR.ColorPiel + ", Altura: " + descR.Altura.ToString() + ", Tipo de cabello: " + descR.TipoCabello + ", Color de cabello: " + descR.ColorCabello + ", Color de ojos: " + descR.ColorOjos + ", Complexión: " + descR.Complexion + ", Tatuajes: " + (descR.Tatuajes == true ? "SI" : "NO");
+
                         table.AddCell("Nombre: " + nombre + ", Genero: " + item.Genero.Sexo + ", Alias: " + item.Alias + dirText + descText);
                     }
                 }                

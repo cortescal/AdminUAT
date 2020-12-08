@@ -14,15 +14,11 @@
         <div class="col-12 col-md">
             <input name="fecha2" class="form-control" type="date" />
         </div>
-        <div class="col-lg-1 col-md-2 col-sm-6">
+        <div class="col-lg-1 col-md">
             <button type="submit" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
         </div>
     </div>
 </form>
-
-<div class="col-lg-5 col-md-5 col-sm-12 text-right p-2">
-
-</div>
 <div id="alerta"></div>
 <hr />
 <h5 class="text-muted text-center">Denuncias Fiscalia <small id="f" class="text-center"></small> </h5>
@@ -31,15 +27,15 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-12">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 col-md">
                 <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
             </div>
-            <div class="col-12">
+            <div class="col-12 col-md">
                 <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 col-md">
                 <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
             </div>
         </div>
@@ -52,7 +48,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn1"></span></h6>
-                <canvas id="chartMP" style="height:170px;width:200px;"></canvas>
+                <canvas id="chartMP" style="height:100px;width:180px;"></canvas>
             </div>
         </div>
         <div class="row text-muted text-center border border-primary rounded-pill">
@@ -156,8 +152,9 @@
                     };
 
                     var chartOptions = {
-                        scales: {
-
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
                         }
                     };
 
@@ -201,7 +198,7 @@
                             datasets: [{
                                 label: 'Atendidas',
                                 data: atendidas,
-                                backgroundColor: 'rgba(255, 215, 0,0.3)',//'rgba(255, 99, 132, 0.2)',
+                                backgroundColor: 'rgb(255, 215, 0)',//'rgba(255, 99, 132, 0.2)',
                                 borderColor: 'yellow',
                                 borderWidth: 2
                             },{
@@ -216,7 +213,8 @@
                             scales: {
                                 yAxes: [{
                                     ticks: {
-                                        beginAtZero: true
+                                        beginAtZero: true,
+                                        min: 0,
                                     }
                                 }],
                                 xAxes: [{
@@ -224,6 +222,13 @@
                                         fontSize: 7
                                     }
                                 }]
+                            },
+                            responsive: true,
+                            tooltips: {
+                                mode: 'index',
+                                //position: 'cursor',
+                                intersect: false,
+
                             }
                         }
                     });
