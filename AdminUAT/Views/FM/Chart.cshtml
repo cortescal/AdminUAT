@@ -109,7 +109,8 @@
                         scales: {
                             yAxes: [{
                                 ticks: {
-                                    beginAtZero: true
+                                    beginAtZero: true,
+                                    min: 0,
                                 }
                             }],
                             xAxes: [{
@@ -117,6 +118,13 @@
                                     fontSize: 8
                                 }
                             }]
+                        },
+                        responsive: true,
+                        tooltips: {
+                            mode: 'index',
+                            //position: 'cursor',
+                            intersect: false,
+
                         }
                     }
                 });
@@ -192,7 +200,22 @@
 
                 var chartOptions = {
                     scales: {
-
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                min: 0,
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontSize: 7
+                            }
+                        }]
+                    },
+                    responsive:true,
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
                     }
                 };
 
@@ -235,6 +258,13 @@
                                     beginAtZero: true
                                 }
                             }]
+                        },
+                        responsive: true,
+                        tooltips: {
+                            mode: 'index',
+                            //position: 'cursor',
+                            intersect: false,
+
                         }
                     }
                 });

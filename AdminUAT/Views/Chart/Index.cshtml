@@ -26,46 +26,30 @@
 
 <!--Propuesta de DOM-->
 <div class="row">
-    <div class="col-lg-8 col-md-8 col-sm-12">
+    <div class="col-12 col-md">
         <div class="row">
-            <div class="col-lg-6">
-                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
-                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
-            </div>
-            <div class="col-lg-6">
+            <div class="col-12 col-md">
                 <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
                 <canvas id="chartFis2" style="height:100px;width:200px;"></canvas>
             </div>
-        </div>
-        <br />
-        <div class="row">
-            <div class="col-12">
-                <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica a partir de 04/3/2019 al <span id="fechaAmp"></span></h6>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn2"></span></h6>
-                <canvas id="RegionalchartMP" style="height:160px;width:200px;"></canvas>
-            </div>
-            <div class="col-lg-6">
-                <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn1"></span></h6>
-                <canvas id="chartMP" style="height:170px;width:200px;"></canvas>
+            <div class="col-12 col-md">
+                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
+                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
             </div>
         </div>
         <div class="row text-muted text-center border border-primary rounded-pill">
-            <div class="col-lg-4">
+            <div class="col-12 col-md">
                 <i><b>CDI: <span id="cdi"></span></b></i>
             </div>
-            <div class="col-lg-4">
+            <div class="col-12 col-md">
                 <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
             </div>
-            <div class="col-lg-4">
+            <div class="col-12 col-md">
                 <i><b>Archivo: <span id="archivo"></span></b></i>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-12 col-md">
         <h6 class="border border-primary text-center rounded-pill">Desglose por origen <small id="d"></small></h6>
         <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
     </div>
@@ -96,6 +80,16 @@
 
     //Desglose por origen
     mostrarGrafica();
+
+    function generarNumero(numero) {
+        return (Math.random() * numero).toFixed(0);
+    }
+
+    function colorRGB() {
+        var coolor = "(" + generarNumero(255) + "," + generarNumero(255) + "," + generarNumero(255) + ")";
+        return "rgb" + coolor;
+    }
+
     function mostrarGrafica()
     {
         $.ajax({
@@ -157,8 +151,9 @@
                 };
 
                 var chartOptions = {
-                    scales: {
-
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
                     }
                 };
 
@@ -170,132 +165,39 @@
             }
         });
 
-
-
-        //chart de NOMBRE mp con el numero de denuncias sin atender [Fiscalia Metropolitana]
         $.ajax({
             type: "GET",
-            url: "Chart/ChartMP",
-            beforeSend: function () {
-                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
-            },
+            url: "Chart/General?fecha=" + fecha + "&fecha2=" + fecha2,
             success: function (response) {
-                var data = response;
-                var nombre = new Array();
-                var sinAtencion = new Array();
-                var total = 0;
-
-                for (var i = 0; i < data.length; i++) {
-                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
-                    total = total + (data[i]['stock'] - data[i]['resuelto']);
-                }
-
-                document.getElementById('tn1').innerHTML = total;
-
-                var ctx = document.getElementById('chartMP').getContext('2d');
-
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: nombre,
-                        datasets: [{
-                            label: 'Metropolitana',
-                            data: sinAtencion,
-                            backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'red',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontSize: 7
-                                }
-                            }]
-                        }
-                    }
-                });
-
-            }
-
-        });
-
-        //chart NOMBRE mp con el numero de denuncias sin atender [Fiscalia Regional]
-        $.ajax({
-            type: "GET",
-            url: "Chart/RegionalChartMP",
-            beforeSend: function () {
-                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
-            },
-            success: function (response) {
-                var data = response;
-                var nombre = new Array();
-                var sinAtencion = new Array();
-                var total = 0;
-
-
-                for (var i = 0; i < data.length; i++) {
-                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
-                    total = total + (data[i]['stock'] - data[i]['resuelto']);
-                }
-
-                document.getElementById('tn2').innerHTML = total;
-
-                var ctx = document.getElementById('RegionalchartMP').getContext('2d');
-
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: nombre,
-                        datasets: [{
-                            label: 'Regional',
-                            data: sinAtencion,
-                            backgroundColor: 'rgba(231, 0, 0, 0.3)',
-                            borderColor: 'red',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontSize: 8
-                                }
-                            }]
-                        }
-                    }
-                });
-
-            }
-
-        });
-
-
-        //Cantidad de denuncias RECIBIDAS por fiscalia PASTEL
-        $.ajax({
-            type: "GET",
-            url: "Chart/Regional?fecha=" + fecha + "&fecha2=" + fecha2,
-            beforeSend: function () {
-                //$("#chartFisLoad").html('<div class="py-5 text-center text-muted"><p><i class="far fa-hourglass fa-spin fa-2x text-muted"></i></p><p>Cargando...</p></div>');
-            },
-            success: function (response) {               
                 var datos = response;
+                var fiscalias = datos.data;
 
-                document.getElementById('t1').innerHTML = (datos['metro'] + datos['regional']);
-                document.getElementById('t2').innerHTML = (datos['metroSolucion'] + datos['regSolucion']);
+                var nombre = new Array();
+                var recibidas = new Array();
+                var atendidas = new Array();
+                var totalR = 0;
+                var totalA = 0;
+                var color = new Array();
+
+                console.log(datos);
+                console.log(fiscalias);
+
+                for (var i = 0; i < fiscalias.length; i++) {
+                    nombre.push(fiscalias[i]['nombre']);
+                    recibidas.push(fiscalias[i]['recibidas']);
+                    atendidas.push(fiscalias[i]['atendidas']);
+
+                    totalR = totalR + fiscalias[i]['recibidas'];
+                    totalA = totalA + fiscalias[i]['atendidas'];
+
+                    color.push(colorRGB());
+                }
+
+                console.log(nombre, recibidas, atendidas);
+
+
+                document.getElementById('t1').innerHTML = totalR;
+                document.getElementById('t2').innerHTML = totalA;
                 document.getElementById('cdi').innerHTML = datos['cdi'];
                 document.getElementById('constancia').innerHTML = datos['constancia'];
                 document.getElementById('archivo').innerHTML = datos['archivo'];
@@ -305,10 +207,10 @@
                 var myChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['Regional', 'Metropolitana'],
+                        labels: nombre,
                         datasets: [{
-                            data: [datos['regional'], datos['metro']],
-                            backgroundColor: ['rgba(0, 158, 255, 0.4)', 'rgba(0, 158, 255, 1)'],
+                            data: recibidas,
+                            backgroundColor: color,
                             borderWidth: 2
                         }]
                     },
@@ -322,17 +224,16 @@
                         }
                     }
                 });
-
 
                 var ctx2 = document.getElementById('chartFis2').getContext('2d');
 
                 var myChart = new Chart(ctx2, {
                     type: 'pie',
                     data: {
-                        labels: ['Regional', 'Metropolitana'],
+                        labels: nombre,
                         datasets: [{
-                            data: [datos['regSolucion'], datos['metroSolucion']],
-                            backgroundColor: ['rgba(0, 188, 11, 0.4)', 'rgba(0, 188, 11, 1)'],
+                            data: atendidas,
+                            backgroundColor: color,
                             borderWidth: 2
                         }]
                     },
@@ -346,9 +247,9 @@
                         }
                     }
                 });
-
             }
         });
+
         contador = contador + 1;
         //console.log("refresh " + contador);
     }

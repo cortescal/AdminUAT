@@ -43,6 +43,8 @@ namespace AdminUAT.Controllers
         public async Task<IEnumerable<MapaData>> JsonData(string fecha, string fecha2)
         {
             List<MapaData> json = new List<MapaData>();
+            var fiscalia = await _context.Fiscalias.Where(x => x.Value == "FGE").Select(x => x.Id).FirstOrDefaultAsync();
+
             if (fecha2 != "" && fecha2 != null)
             {
                 json = await JsonData2(fecha, fecha2);
@@ -123,8 +125,10 @@ namespace AdminUAT.Controllers
         [HttpGet("ChartMP")]
         public async Task<IEnumerable<MP>> ChartMP()
         {
+            var fiscalia = await _context.Fiscalias.Where(x => x.Value == "FGE").Select(x => x.Id).FirstOrDefaultAsync();
+
             var json = await _context.MP
-                .Where(x => x.Activo == true && x.UR.RegionId == 6)
+                .Where(x => x.Activo == true && x.UR.RegionId == 6 && x.FiscaliaId==fiscalia)
                 .OrderByDescending(x => (x.Stock - x.Resuelto))
                 .ToListAsync();
 
@@ -136,18 +140,122 @@ namespace AdminUAT.Controllers
         [HttpGet("RegionalChartMP")]
         public async Task<IEnumerable<MP>> RegionalChartMP()
         {
+            var fiscalia = await _context.Fiscalias.Where(x => x.Value == "FGE").Select(x => x.Id).FirstOrDefaultAsync();
+
             var json = await _context.MP
-                .Where(x => x.Activo == true && x.UR.RegionId != 6)
+                .Where(x => x.Activo == true && x.UR.RegionId != 6 && x.FiscaliaId == fiscalia)
                 .OrderByDescending(x => (x.Stock - x.Resuelto))
                 .ToListAsync();
 
             return json;
         }
 
+        [Authorize(Roles ="AEI,Root")]
+        [HttpGet("General")]
+        public async Task<IActionResult> General(string fecha,string fecha2)
+        {
+            var fiscalias = await _context.Fiscalias.Where(x => x.Status == Status.Active).ToListAsync();
+            var fiscSend = new List<DataFiscalia>();
+
+            if (fecha != null && fecha2 != null)
+            {
+                DateTime fechaI = Convert.ToDateTime(fecha);
+                DateTime fechaF = Convert.ToDateTime(fecha2);
+
+                foreach(var item in fiscalias)
+                {
+                    var denuncia = await _context.Denuncia.AsNoTracking()
+                        .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3
+                        && x.MPId != null && x.FiscaliaId == item.Id)
+                        .ToListAsync();
+
+                    var nombre = await _context.Fiscalias.AsNoTracking()
+                        .Where(x => x.Id == item.Id).Select(x => x.Value).FirstOrDefaultAsync();
+
+                    var atendidas = denuncia.Where(x => x.SolucionId != null).Count();
+                    var recibidas = denuncia.Count();
+
+                    var sendF = new DataFiscalia
+                    {
+                        Nombre = nombre,
+                        Atendidas = atendidas,
+                        Recibidas = recibidas
+                    };
+
+                    fiscSend.Add(sendF);
+                }
+
+                var denuncias = await _context.Denuncia.AsNoTracking()
+                 .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3
+                    && x.MPId != null)
+                .ToListAsync();
+
+                var cdi = denuncias.Where(x => x.SolucionId == 1).Count();
+                var constancia = denuncias.Where(x => x.SolucionId == 2).Count();
+                var archivo = denuncias.Where(x => x.SolucionId == 3).Count();
+
+                var send = new MapaFiscalia
+                {
+                    Data=fiscSend,
+                    CDI=cdi,
+                    Archivo=archivo,
+                    Constancia=constancia
+                };
+                return Ok(send);
+            }
+            else
+            {
+                fecha = fecha == null ? DateTime.Now.ToString("yyyy-MM-dd") : fecha;
+
+                foreach (var item in fiscalias)
+                {
+                    var denuncia = await _context.Denuncia.AsNoTracking()
+                        .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3
+                        && x.MPId != null && x.FiscaliaId == item.Id)
+                        .ToListAsync();
+
+                    var nombre = await _context.Fiscalias.AsNoTracking()
+                        .Where(x => x.Id == item.Id).Select(x => x.Value).FirstOrDefaultAsync();
+
+                    var atendidas = denuncia.Where(x => x.SolucionId != null).Count();
+                    var recibidas = denuncia.Where(x => x.SolucionId == null).Count();
+
+                    var sendF = new DataFiscalia
+                    {
+                        Nombre = nombre,
+                        Atendidas = atendidas,
+                        Recibidas = recibidas
+                    };
+
+                    fiscSend.Add(sendF);
+                }
+
+                var denuncias = await _context.Denuncia.AsNoTracking()
+                 .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3
+                    && x.MPId != null)
+                .ToListAsync();
+
+                var cdi = denuncias.Where(x => x.SolucionId == 1).Count();
+                var constancia = denuncias.Where(x => x.SolucionId == 2).Count();
+                var archivo = denuncias.Where(x => x.SolucionId == 3).Count();
+
+                var send = new MapaFiscalia
+                {
+                    Data = fiscSend,
+                    CDI = cdi,
+                    Archivo = archivo,
+                    Constancia = constancia
+                };
+                return Ok(send);
+            }
+        }
+
         [Authorize(Roles = "AEI, Root, FiscMet, FiscReg")]
         [HttpGet("Regional")]
         public async Task<IActionResult> Regional(string fecha, string fecha2)
         {
+            var fiscalia = await _context.Fiscalias.Where(x => x.Value == "FGE").Select(x => x.Id).FirstOrDefaultAsync();
+
             if (fecha2 != "" && fecha2 != null)
             {
                 DateTime fechaI = Convert.ToDateTime(fecha);
@@ -156,7 +264,7 @@ namespace AdminUAT.Controllers
                 var denuncias1 = await _context.Denuncia
                     .Include(x => x.MP)
                         .ThenInclude(x => x.UR)
-                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && x.MPId != null)
+                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && x.MPId != null && x.FiscaliaId == fiscalia)
                     .ToListAsync();
 
                 var regional1 = denuncias1.Where(x => x.MP.UR.RegionId != 6).Count();
@@ -177,7 +285,7 @@ namespace AdminUAT.Controllers
             var denuncias = await _context.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                 .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3)
+                 .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && x.FiscaliaId == fiscalia)
                 .ToListAsync();
 
             var regional = denuncias.Where(x => x.MP.UR.RegionId != 6).Count();

@@ -17,4 +17,19 @@ namespace AdminUAT.Models.ExtraModels
 
         public string Ubicacion { get; set; }
     }
+
+    public class MapaFiscalia
+    {
+        public List<DataFiscalia> Data { get; set; }
+        public int CDI { get; set; }
+        public int Constancia { get; set; }
+        public int Archivo { get; set; }
+    }
+
+    public class DataFiscalia
+    {
+        public string Nombre { get; set; }
+        public int Atendidas { get; set; }
+        public int Recibidas { get; set; }
+    }
 }

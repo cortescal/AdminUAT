@@ -39,9 +39,11 @@ namespace AdminUAT.Controllers
         public async Task<IEnumerable<MapaData>> JsonData(string fecha, string fecha2)
         {
             List<MapaData> json = new List<MapaData>();
+            var fiscalia = await _contextUAT.Fiscalias.Where(x => x.Value == "FGE").Select(x => x.Id).FirstOrDefaultAsync();
+
             if (fecha2 != "" && fecha2 != null)
             {
-                json = await JsonData2(fecha, fecha2);
+                json = await JsonData2(fecha, fecha2,fiscalia);
                 return json.OrderByDescending(x => x.Recibidas);
             }
 
@@ -55,11 +57,11 @@ namespace AdminUAT.Controllers
             foreach (var item in kiosco)
             {
                 var recibidas = await _contextUAT.Denuncia
-                    .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.BitaKioscoId == item.Id && x.Paso == 3)
+                    .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.BitaKioscoId == item.Id && x.Paso == 3 && x.FiscaliaId == fiscalia)
                     .CountAsync();
 
                 var atendidas = await _contextUAT.Denuncia
-                    .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.BitaKioscoId == item.Id && x.SolucionId != null)
+                    .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia)
                     .CountAsync();
 
                 var obj = new MapaData
@@ -77,13 +79,13 @@ namespace AdminUAT.Controllers
             var dpoR = await _contextUAT.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1))
+                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
                 .CountAsync();
 
             var dpoA = await _contextUAT.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1))
+                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
                 .CountAsync();
 
             var obj1 = new MapaData
@@ -99,7 +101,7 @@ namespace AdminUAT.Controllers
             return json.OrderByDescending(x => x.Recibidas);
         }
 
-        private async Task<List<MapaData>> JsonData2(string fecha, string fecha2)
+        private async Task<List<MapaData>> JsonData2(string fecha, string fecha2, Guid fiscalia)
         {
             List<MapaData> json = new List<MapaData>();
             DateTime fechaI = Convert.ToDateTime(fecha);
@@ -115,11 +117,11 @@ namespace AdminUAT.Controllers
                 var a = fechaI.DayOfWeek;
 
                 var recibidas = await _contextUAT.Denuncia
-                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.BitaKioscoId == item.Id && x.Paso == 3)
+                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.BitaKioscoId == item.Id && x.Paso == 3 && x.FiscaliaId == fiscalia)
                     .CountAsync();
 
                 var atendidas = await _contextUAT.Denuncia
-                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.BitaKioscoId == item.Id && x.SolucionId != null)
+                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia)
                     .CountAsync();
 
                 var obj = new MapaData
@@ -137,13 +139,13 @@ namespace AdminUAT.Controllers
             var dpoR = await _contextUAT.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1))
+                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
                 .CountAsync();
 
             var dpoA = await _contextUAT.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1))
+                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
                 .CountAsync();
 
             var obj1 = new MapaData
