@@ -159,11 +159,16 @@
                     }
                 };
 
-                window.myChart = new Chart(ctx, {
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
+
+                var chart = new Chart(ctx, {
                     type: 'horizontalBar',
                     data: datos,
                     options: chartOptions
                 });
+                
             }
         });
 
@@ -206,6 +211,10 @@
 
                 var ctx = document.getElementById('chartFis').getContext('2d');
 
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
+
                 var myChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
@@ -228,6 +237,10 @@
                 });
 
                 var ctx2 = document.getElementById('chartFis2').getContext('2d');
+
+                if (ctx2 != null) {
+                    ctx2.innerHTML = "";
+                }
 
                 var myChart = new Chart(ctx2, {
                     type: 'pie',

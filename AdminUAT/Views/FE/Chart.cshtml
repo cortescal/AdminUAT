@@ -158,6 +158,10 @@
                         }
                     };
 
+                    if (ctx != null) {
+                        ctx.innerHTML = "";
+                    }
+
                     window.myChart = new Chart(ctx, {
                         type: 'horizontalBar',
                         data: datos,
@@ -190,6 +194,10 @@
                     document.getElementById('tn1').innerHTML = total;
 
                     var ctx = document.getElementById('chartMP').getContext('2d');
+
+                    if (ctx != null) {
+                        ctx.innerHTML = "";
+                    }
 
                     var myChart = new Chart(ctx, {
                         type: 'bar',
@@ -254,6 +262,10 @@
                     document.getElementById('archivo').innerHTML = datos['archivo'];
 
                     var ctx = document.getElementById('chartFis').getContext('2d');
+
+                    if (ctx != null) {
+                        ctx.innerHTML = "";
+                    }
 
                     var myChart = new Chart(ctx, {
                         type: 'pie',

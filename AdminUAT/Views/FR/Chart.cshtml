@@ -91,6 +91,10 @@
 
                 var ctx = document.getElementById('chartMP').getContext('2d');
 
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
+
                 var myChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -203,6 +207,10 @@
                     }
                 };
 
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
+
                 window.myChart = new Chart(ctx, {
                     type: 'bar',
                     data: datos,
@@ -225,6 +233,10 @@
                 document.getElementById('t1').innerHTML = ('Recibidas ' + datos['regional'] + ' | Atendidas ' + datos['regSolucion']);
 
                 var ctx = document.getElementById('chartFis').getContext('2d');
+
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
 
                 var myChart = new Chart(ctx, {
                     type: 'pie',

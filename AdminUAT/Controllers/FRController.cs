@@ -56,13 +56,22 @@ namespace AdminUAT.Controllers
                 .ToListAsync();
 
             var denuncia = await _contextUAT.Denuncia.AsNoTracking()
+                .Include(x => x.MP)
+                    .ThenInclude(x => x.UR)
                     .Where(x => x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && x.FiscaliaId == fiscalia)
+                    .Select(x => new
+                    {
+                        Kiosko = x.BitaKioscoId,
+                        Solucion = x.SolucionId,
+                        Fiscalia = x.FiscaliaId,
+                        Region = x.MP.UR.RegionId
+                    })
                     .ToListAsync();
 
             foreach (var item in kiosco)
             {
-                var recibidas = denuncia.Where(x => x.BitaKioscoId == item.Id).Count();
-                var atendidas = denuncia.Where(x => x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia).Count();
+                var recibidas = denuncia.Where(x => x.Kiosko == item.Id).Count();
+                var atendidas = denuncia.Where(x => x.Kiosko == item.Id && x.Solucion != null && x.Fiscalia == fiscalia).Count();
 
                 if (recibidas > 0 || atendidas > 0)
                 {
@@ -79,17 +88,9 @@ namespace AdminUAT.Controllers
             }
 
             //Pagina oficial
-            var dpoR = await _contextUAT.Denuncia.AsNoTracking()
-                .Include(x => x.MP)
-                    .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
-                .CountAsync();
+            var dpoR = denuncia.Where(x => x.Kiosko == 1 && (x.Region != 6 && x.Region != 1) && x.Fiscalia == fiscalia).Count();
 
-            var dpoA = await _contextUAT.Denuncia.AsNoTracking()
-                .Include(x => x.MP)
-                    .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && x.AltaSistema.ToString("yyyy-MM-dd") == fecha && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
-                .CountAsync();
+            var dpoA = denuncia.Where(x => x.Kiosko == 1  && x.Solucion != null && (x.Region != 6 && x.Region != 1) && x.Fiscalia == fiscalia).Count();
 
             if(dpoA>0||dpoR>0)
             {
@@ -119,15 +120,25 @@ namespace AdminUAT.Controllers
                 .ToListAsync();
 
             var denuncia = await _contextUAT.Denuncia.AsNoTracking()
-                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && x.FiscaliaId == fiscalia)
+                .Include(x => x.MP)
+                    .ThenInclude(x => x.UR)
+                    .Where(x => (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && 
+                        x.FiscaliaId == fiscalia)
+                    .Select(x => new
+                    {
+                        Kiosko = x.BitaKioscoId,
+                        Solucion = x.SolucionId,
+                        Fiscalia = x.FiscaliaId,
+                        Region = x.MP.UR.RegionId
+                    })
                     .ToListAsync();
 
             foreach (var item in kiosco)
             {
                 var a = fechaI.DayOfWeek;
 
-                var recibidas = denuncia.Where(x => x.BitaKioscoId == item.Id).Count();
-                var atendidas = denuncia.Where(x => x.BitaKioscoId == item.Id && x.SolucionId != null && x.FiscaliaId == fiscalia).Count();
+                var recibidas = denuncia.Where(x => x.Kiosko == item.Id).Count();
+                var atendidas = denuncia.Where(x => x.Kiosko == item.Id && x.Solucion != null && x.Fiscalia == fiscalia).Count();
 
                 if (recibidas > 0 || atendidas > 0)
                 {
@@ -144,17 +155,9 @@ namespace AdminUAT.Controllers
             }
 
             //Pagina oficial
-            var dpoR = await _contextUAT.Denuncia.AsNoTracking()
-                .Include(x => x.MP)
-                    .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.Paso == 3 && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
-                .CountAsync();
+            var dpoR = denuncia.Where(x => x.Kiosko == 1 && (x.Region != 6 && x.Region != 1) && x.Fiscalia == fiscalia).Count();
 
-            var dpoA = await _contextUAT.Denuncia.AsNoTracking()
-                .Include(x => x.MP)
-                    .ThenInclude(x => x.UR)
-                .Where(x => x.BitaKioscoId == 1 && (x.AltaSistema.Date >= fechaI.Date && x.AltaSistema.Date <= fechaF.Date) && x.SolucionId != null && (x.MP.UR.RegionId != 6 && x.MP.UR.RegionId != 1) && x.FiscaliaId == fiscalia)
-                .CountAsync();
+            var dpoA = denuncia.Where(x => x.Kiosko == 1 && x.Solucion != null && (x.Region != 6 && x.Region != 1) && x.Fiscalia == fiscalia).Count();
 
             if (dpoR > 0 || dpoA > 0)
             {
