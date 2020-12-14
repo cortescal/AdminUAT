@@ -5,7 +5,8 @@
 @{
     ViewData["Title"] = "Fiscal Especializado";
     var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FI").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value").ToList();
-    
+    fiscalias.Insert(0, (new SelectListItem { Text="Fiscalía de Investigación Metropolitana",Value= "bd1cb705-e3c3-48a3-b06f-9d39e19948c6" }));
+    fiscalias.Insert(0, (new SelectListItem { Text = "Fiscalía de Investigación Regional", Value = "81abc9b3-423b-4676-9528-6181f5e6b651" }));
 }
     <div class="row">
         <div class="col-12 col-md">
@@ -24,7 +25,7 @@
     </div>
 <div id="alerta"></div>
 <hr />
-<h5 class="text-muted text-center">Denuncias Fiscalia <small id="f" class="text-center"></small> </h5>
+<h5 class="text-muted text-center">Denuncias <span id="fiscaliaC"></span> <small id="f" class="text-center"></small> </h5>
 <br />
 
 <!--Propuesta de DOM-->
@@ -82,9 +83,11 @@
     var fecha = $("#fecha").val();
     var fecha2 = $("#fecha2").val();
     var fiscalia = $("#fisc").val();
+    var fiscaliaC = $("#fisc option:selected").text();
 
     $("#fisc").on("change", function () {
         fiscalia = $("#fisc").val();
+        fiscaliaC = $("#fisc option:selected").text();
     });
 
     $("#fecha").on("change", function () {
@@ -112,6 +115,7 @@
 
     function mostrarGrafica() {
         console.log(fiscalia);
+        $("#fiscaliaC").text(fiscaliaC);
         $.ajax({
             type: "GET",
             url: "FE/JsonDataRoot?fecha=" + fecha + "&fecha2=" + fecha2 + "&fiscalia=" + fiscalia,
