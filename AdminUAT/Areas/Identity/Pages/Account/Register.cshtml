@@ -4,7 +4,7 @@
 
 @{ 
     var fiscaliasMp = new SelectList(context.Fiscalias.Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
-    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FGE").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
+    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FI").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
 }
 
 <h4 class="text-muted text-center"><i class="fas fa-user-plus"></i> Add usuario</h4>

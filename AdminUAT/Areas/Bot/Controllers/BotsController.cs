@@ -95,7 +95,6 @@ namespace AdminUAT.Areas.Bot.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ex = ex;
                     }
                 }
             }

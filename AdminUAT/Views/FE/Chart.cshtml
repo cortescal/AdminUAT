@@ -2,8 +2,29 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject AdminUAT.Data.NewUatDbContext context
+@inject AdminUAT.Data.ApplicationDbContext application
 @{
     ViewData["Title"] = "Fiscal Especializado";
+
+    var fiscalia = "";
+    if (User.IsInRole("FiscMet"))
+    {
+        fiscalia = "Fiscalia de Investigación Metropolitana";
+    }
+    else if (User.IsInRole("FiscReg"))
+    {
+        fiscalia = "Fiscalia de Investigación Regional";
+    }
+    else
+    {
+        var userId = UserManager.GetUserId(User);
+        var rolFis = application.RolFiscalias
+            .Where(x => x.UserId == Guid.Parse(userId)).Select(x => x.FiscaliaId).FirstOrDefault();
+
+        fiscalia = context.Fiscalias.Where(x => x.Id == rolFis).Select(x => x.Name).FirstOrDefault();
+    }
+
+
 }
 
 <form method="get" asp-area="" asp-controller="FE" asp-action="Chart">
@@ -21,7 +42,7 @@
 </form>
 <div id="alerta"></div>
 <hr />
-<h5 class="text-muted text-center">Denuncias Fiscalia <small id="f" class="text-center"></small> </h5>
+<h5 class="text-muted text-center">Denuncias @fiscalia <small id="f" class="text-center"></small> </h5>
 <br />
 
 <div class="row">

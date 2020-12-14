@@ -100,23 +100,25 @@
                             }
                             else if (User.IsInRole("FiscReg"))
                             {
+
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-archive"></i></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="FR" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="FE" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
                                 </li>
                             }
                             else if (User.IsInRole("FiscMet"))
                             {
+
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="Denuncias" asp-action="Index"><i class="fas fa-archive"></i></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="FM" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="FE" asp-action="Chart"><i class="fas fa-chart-line"></i></a>
                                 </li>
                             }
-                            
+
                             else if (User.IsInRole("FiscEsp"))
                             {
                                 <li class="nav-item">
@@ -142,8 +144,8 @@
                                 </li>
                             }
 
-                            @if (User.IsInRole("Root") || User.IsInRole("AEI") || 
-                                User.IsInRole("FiscMet") || User.IsInRole("FiscReg") || User.IsInRole("FiscEsp"))
+                            @if (User.IsInRole("Root") || User.IsInRole("AEI") ||
+                           User.IsInRole("FiscMet") || User.IsInRole("FiscReg") || User.IsInRole("FiscEsp"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="AdminSoportes" asp-action="index"><i class="far fa-comment-alt"></i></a>

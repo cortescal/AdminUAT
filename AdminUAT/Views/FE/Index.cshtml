@@ -4,7 +4,8 @@
 @inject AdminUAT.Data.NewUatDbContext context
 @{
     ViewData["Title"] = "Fiscal Especializado";
-    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FI").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value");
+    var fiscalias = new SelectList(context.Fiscalias.Where(x=>x.Value!="FI").Select(x => new { Id = x.Id, Value = x.Name }).ToList(), "Id", "Value").ToList();
+    
 }
     <div class="row">
         <div class="col-12 col-md">

@@ -18,7 +18,7 @@ namespace AdminUAT.Controllers
             _contextUAT = contextUAT;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
