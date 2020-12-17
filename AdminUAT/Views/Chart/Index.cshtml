@@ -5,55 +5,70 @@
 
 <form method="get" asp-area="" asp-controller="Chart" asp-action="Index">
     <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="col-12 col-md">
             <input name="fecha" class="form-control" type="date"/>
         </div>
-        <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="col-12 col-md">
             <input name="fecha2" class="form-control" type="date"/>
         </div>
-        <div class="col-lg-1 col-md-2 col-sm-6">
+        <div class="col-lg-1 col-md">
             <button type="submit" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
         </div>
     </div>
 </form>
-<div class="col-lg-5 col-md-5 col-sm-12 text-right p-2">
-    
-</div>
 <div id="alerta"></div>
 <hr />
-<h5 class="text-muted text-center">Denuncias UAT@@ <small id="f" class="text-center"></small> </h5>
-<br />
+<div class="row">
+    <div class="col-12">
+        <h4 class="text-muted text-center">Denuncias UAT@@ <small id="f" class="text-center"></small> </h4>
+    </div>
+</div>
 
 <!--Propuesta de DOM-->
-<div class="row">
-    <div class="col-12 col-md">
-        <div class="row">
-            <div class="col-12 col-md">
-                <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
-                <canvas id="chartFis2" style="height:100px;width:200px;"></canvas>
-            </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="clearfix visible-xs"></div>
+        <div class="col-xs-12 col-md-12 col-lg-8 col-sm-12">
+            <fieldset class="tablaDatos">
+                <legend class="tituloDatos">Información Recibidas por Físcalia</legend>
+                <div class="row">
+                    <div class="col-12 col-md">
+                        <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
+                        <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="tablaDatos">
+                <legend class="tituloDatos">Información Atendidas por Físcalia</legend>
+                <div class="row">
+                    <div class="col-12 col-md">
+                        <h6 class="border border-primary text-center rounded-pill">Atendidas <span id="t2"></span></h6>
+                        <canvas id="chartFis2" style="height:100px;width:200px;"></canvas>
+                    </div>
+                </div>
+            </fieldset>
         </div>
-        <div class="row">
-            <div class="col-12 col-md">
-                <h6 class="border border-primary text-center rounded-pill">Recibidas <span id="t1"></span></h6>
-                <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
-            </div>
-        </div>
-        <div class="row text-muted text-center border border-primary rounded-pill">
-            <div class="col-12 col-md">
-                <i><b>CDI: <span id="cdi"></span></b></i>
-            </div>
-            <div class="col-12 col-md">
-                <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
-            </div>
-            <div class="col-12 col-md">
-                <i><b>Archivo: <span id="archivo"></span></b></i>
-            </div>
+        <div class="col-xs-12 col-md-12 col-lg-4 col-sm-12">
+            <fieldset class="tablaDatos">
+                <legend class="tituloDatos">Información por Municipio</legend>
+                <div class="col-12 col-md">
+                    <h6 class="border border-primary text-center rounded-pill">Desglose por origen <small id="d"></small></h6>
+                    <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
+                </div>
+            </fieldset>
         </div>
     </div>
-    <div class="col-12 col-md">
-        <h6 class="border border-primary text-center rounded-pill">Desglose por origen <small id="d"></small></h6>
-        <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
+    <div class="row text-muted text-center border border-primary rounded-pill">
+        <div class="col-12 col-md">
+            <i><b>CDI: <span id="cdi"></span></b></i>
+        </div>
+        <div class="col-12 col-md">
+            <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
+        </div>
+        <div class="col-12 col-md">
+            <i><b>Archivo: <span id="archivo"></span></b></i>
+        </div>
     </div>
 </div>
 
@@ -238,10 +253,6 @@
 
                 var ctx2 = document.getElementById('chartFis2').getContext('2d');
 
-                if (ctx2 != null) {
-                    ctx2.innerHTML = "";
-                }
-
                 var myChart = new Chart(ctx2, {
                     type: 'pie',
                     data: {
@@ -264,12 +275,6 @@
                 });
             }
         });
-
-        contador = contador + 1;
-        //console.log("refresh " + contador);
     }
-
-    setInterval("mostrarGrafica()", 600000);
-
 </script>
 
