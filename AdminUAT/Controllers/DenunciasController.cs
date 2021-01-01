@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace AdminUAT.Controllers
 {
-    [Authorize(Roles = "MP, Root, AEI, FiscMet, FiscReg")]
+    [Authorize(Roles = "MP, Root, AEI, FiscMet, FiscReg, FiscEsp")]
     public class DenunciasController : Controller
     {
         private readonly NewUatDbContext _context;
@@ -106,7 +106,7 @@ namespace AdminUAT.Controllers
             return lista;
         }
 
-        [Authorize(Roles = "Root, AEI, FiscMet, FiscReg")]
+        [Authorize(Roles = "Root, AEI, FiscMet, FiscReg, FiscEsp")]
         private List<Denuncia> SolicitudGeneral(DateTime fecha, bool opc, long id, string palabra, long kiosco)
         {
             ViewBag.fecha = fecha.ToString("yyyy-MM-dd");
@@ -149,6 +149,23 @@ namespace AdminUAT.Controllers
                         ViewBag.alerta = false;
                     }
                 }
+                else if(User.IsInRole("FiscEsp"))
+                {
+                    var userId = _userManager.GetUserId(User);
+
+                    var rolFis = _dbcontext.RolFiscalias.AsNoTracking()
+                        .Where(x => x.UserId == Guid.Parse(userId))
+                        .Select(x => x.FiscaliaId).FirstOrDefault();
+
+                    if (_subProceso.AccesoDenunciaFE(id,(Guid)rolFis))
+                    {
+                        lista = _queryDenuncias.DenunciaPorId(id);
+                    }
+                    else
+                    {
+                        ViewBag.alerta = false;
+                    }
+                }
                 else
                 {
                     lista = _queryDenuncias.DenunciaPorId(id);
@@ -175,13 +192,32 @@ namespace AdminUAT.Controllers
 
             if (User.IsInRole("FiscMet"))
             {
-                lista = lista.Where(x => x.MP.UR.RegionId == 6).ToList();
+                var fiscalia = _context.Fiscalias
+                    .Where(x => x.Value == "FI")
+                    .Select(x => x.Id).FirstOrDefault();
+
+                lista = lista.Where(x => x.MP.UR.RegionId == 6 && x.FiscaliaId==fiscalia).ToList();
                 ViewBag.kioscos = _context.BitaKiosco.Where(x => x.UR.RegionId == 6).OrderBy(x => x.Nombre).ToList();
             }
             else if (User.IsInRole("FiscReg"))
             {
-                lista = lista.Where(x => x.MP.UR.RegionId != 6).ToList();
+                var fiscalia = _context.Fiscalias
+                    .Where(x => x.Value == "FI")
+                    .Select(x => x.Id).FirstOrDefault();
+
+                lista = lista.Where(x => x.MP.UR.RegionId != 6 && x.FiscaliaId == fiscalia).ToList();
                 ViewBag.kioscos = _context.BitaKiosco.Where(x => x.UR.RegionId != 6).OrderBy(x => x.Nombre).ToList();
+            }
+            else if(User.IsInRole("FiscEsp"))
+            {
+                var userId = _userManager.GetUserId(User);
+
+                var rolFis = _dbcontext.RolFiscalias.AsNoTracking()
+                    .Where(x => x.UserId == Guid.Parse(userId))
+                    .Select(x => x.FiscaliaId).FirstOrDefault();
+
+                lista = lista.Where(x =>x.FiscaliaId == rolFis).ToList();
+                ViewBag.kioscos = _context.BitaKiosco.OrderBy(x => x.Nombre).ToList();
             }
             else
             {
@@ -449,13 +485,13 @@ namespace AdminUAT.Controllers
             string msj = "";
             if (paso==1)
             {
-                titulo = "UAT@ - CONFIRMACIÓN DE CORREO ELECTRÓNICO";
+                titulo = "Denuncia en Línea - CONFIRMACIÓN DE CORREO ELECTRÓNICO";
                 msj= $"{Request.Scheme}://fiscalia.puebla.gob.mx:8099/";
             }
             else if(paso==3)
             {
                 var idMP = await _context.Denuncia.Where(x => x.Id == id).Select(x => x.MPId).FirstOrDefaultAsync();
-                titulo = "UAT@ - AVISO DE RECEPCIÓN DE DENUNCIA";
+                titulo = "Denuncia en Línea - AVISO DE RECEPCIÓN DE DENUNCIA";
 
                 if (idMP > 0)
                 {

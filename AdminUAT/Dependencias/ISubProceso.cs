@@ -15,6 +15,7 @@ namespace AdminUAT.Dependencias
         bool ValidaUsuarioSoporte(string usuario, long soporteId);
         bool AccesoDenunciaFM(long denunciaId);
         bool AccesoDenunciaFR(long denunciaId);
+        bool AccesoDenunciaFE(long denunciaId,Guid fiscalia);
         long IdRegionDenuncia(long denunciaId);
     }
 }

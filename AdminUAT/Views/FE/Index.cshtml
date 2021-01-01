@@ -8,32 +8,62 @@
     fiscalias.Insert(0, (new SelectListItem { Text="Fiscalía de Investigación Metropolitana",Value= "bd1cb705-e3c3-48a3-b06f-9d39e19948c6" }));
     fiscalias.Insert(0, (new SelectListItem { Text = "Fiscalía de Investigación Regional", Value = "81abc9b3-423b-4676-9528-6181f5e6b651" }));
 }
-    <div class="row">
-        <div class="col-12 col-md">
-            <input name="fecha" class="form-control" type="date" id="fecha"/>
-        </div>
-        <div class="col-12 col-md">
-            <input name="fecha2" class="form-control" type="date" id="fecha2"/>
-        </div>
-        <div class="col-12 col-md">
-            <select name="fiscalia" class="form-control" id="fisc"
-                    data-style="btn-primary" asp-items="fiscalias"></select>
-        </div>
-        <div class="col-lg-1 col-md">
-            <button onclick="mostrarGrafica()" class="btn btn-outline-dark form-control" id="send"><i class="fa fa-search"></i></button>
-        </div>
-    </div>
-<div id="alerta"></div>
-<hr />
-
 <div class="row">
     <div class="col-12">
-        <h4 class="text-muted text-center">Denuncias <span id="fiscaliaC"></span> <small id="f" class="text-center"></small></h4>
+        <em>Seleccione una fecha inicial, una fecha inicial y unidad de investigación para realizar las busquedas deseadas.</em>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-12">
+        <h4 class="text-muted text-center">Denuncias <span id="fiscaliaC"></span><br /><small id="f" class="text-center"></small></h4>
     </div>
 </div>
 
+<div class="row">
+    <div class="col-12 col-md">
+        <div class="form-group">
+            <label for="fecha">Fecha Inicial</label>
+            <input name="fecha" class="form-control max-today" type="date" id="fecha" />
+        </div>
+    </div>
+    <div class="col-12 col-md">
+        <div class="form-group">
+            <label for="fecha2">Fecha Final</label>
+            <input name="fecha2" class="form-control" type="date" id="fecha2" />
+        </div> 
+    </div>
+    <div class="col-12 col-md">
+        <div class="form-group">
+            <label for="fisc">Fiscalia de Investigación</label>
+            <select name="fiscalia" class="form-control max-today" id="fisc"
+                    data-style="btn-primary" asp-items="fiscalias"></select>
+        </div>    
+    </div>
+    <div class="col-lg-1 col-md">
+        <div class="form-group">
+            <label></label>
+            <button onclick="mostrarGrafica()" class="btn btn-outline-dark form-control" id="send"><i class="fa fa-search"></i></button>
+        </div>
+        
+    </div>
+</div>
+<div id="alerta"></div>
+<hr />
+
 <!--Propuesta de DOM-->
 <div class="container-fluid">
+    <div class="row text-muted text-center border border-primary rounded-pill">
+        <div class="col-lg-4">
+            <i><b>CDI: <span id="cdi"></span></b></i>
+        </div>
+        <div class="col-lg-4">
+            <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
+        </div>
+        <div class="col-lg-4">
+            <i><b>Archivo: <span id="archivo"></span></b></i>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-12 col-md-6 col-lg-8 col-sm-12">
             <fieldset class="tablaDatos">
@@ -48,7 +78,9 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
+                        <div id="container-fis">
+                            <canvas id="chartFis" style="height:100px;width:200px;"></canvas>
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -57,13 +89,15 @@
                 <legend class="tituloDatos">Información por MP</legend>
                 <div class="row">
                     <div class="col-12">
-                        <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica <span id="fechaAmp2"></span> al <span id="fechaAmp"></span></h6>
+                        <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica <span id="fechaAmp2"></span> hasta el <span id="fechaAmp"></span></h6>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
                         <h6 class="border border-primary text-center rounded-pill">Denuncias por atender por AMP <span id="tn1"></span></h6>
-                        <canvas id="chartMP" style="height:100px;width:180px;"></canvas>
+                        <div id="container-mp">
+                            <canvas id="chartMP" style="height:100px;width:180px;"></canvas>
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -73,20 +107,11 @@
                 <legend class="tituloDatos">Información por Municipio</legend>
                 <div class="col-12 col-md">
                     <h6 class="border border-primary text-center rounded-pill">Desglose por origen <small id="d"></small></h6>
-                    <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
+                    <div id="chartContainer">
+                        <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
+                    </div>
                 </div>
             </fieldset>
-        </div>
-    </div>
-    <div class="row text-muted text-center border border-primary rounded-pill">
-        <div class="col-lg-4">
-            <i><b>CDI: <span id="cdi"></span></b></i>
-        </div>
-        <div class="col-lg-4">
-            <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
-        </div>
-        <div class="col-lg-4">
-            <i><b>Archivo: <span id="archivo"></span></b></i>
         </div>
     </div>
 </div>
@@ -131,7 +156,7 @@
     mostrarGrafica();
 
     function mostrarGrafica() {
-        console.log(fiscalia);
+
         $("#fiscaliaC").text(fiscaliaC);
         $.ajax({
             type: "GET",
@@ -197,6 +222,13 @@
                     }
                 };
 
+
+                
+                document.getElementById("chartContainer").innerHTML = '&nbsp;'; 
+                document.getElementById("chartContainer").innerHTML = '<canvas id="myChart" style="width: 200px; height: 400px;"></canvas>';
+                var ctx = document.getElementById("myChart").getContext("2d");
+                 
+
                 if (ctx != null) {
                     ctx.innerHTML = "";
                 }
@@ -209,7 +241,7 @@
             }
         });
 
-        //chart de NOMBRE mp con el numero de denuncias sin atender [Fiscalia Metropolitana]
+        //chart de NOMBRE mp con el numero de denuncias sin atender
         $.ajax({
             type: "GET",
             url: "FE/ChartMPRoot?fiscalia=" + fiscalia,
@@ -217,16 +249,27 @@
                 $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
             },
             success: function (response) {
+
+                console.log(response);
+
                 var data = response;
                 var nombre = new Array();
                 var sinAtencion = new Array();
                 var atendidas = new Array();
                 var total = 0;
 
+                var totalSinA = 0;
+
                 for (var i = 0; i < data.length; i++) {
                     nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-                    sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
-                    total = total + (data[i]['stock'] - data[i]['resuelto']);
+
+                    if (data[i]['stock'] - data[i]['resuelto'] < 0)
+                        totalSinA = 0;
+                    else
+                        totalSinA = data[i]['stock'] - data[i]['resuelto'];
+
+                    sinAtencion.push(totalSinA);
+                    total = total + (totalSinA);
                     atendidas.push(data[i]['resuelto']);
                 }
 
@@ -234,9 +277,9 @@
 
                 var ctx = document.getElementById('chartMP').getContext('2d');
 
-                if (ctx != null) {
-                    ctx.innerHTML = "";
-                }
+                document.getElementById("container-mp").innerHTML = '&nbsp;';
+                document.getElementById("container-mp").innerHTML = '<canvas id="chartMP" style="height:100px;width:180px;"></canvas>';
+                var ctx = document.getElementById("chartMP").getContext("2d");
 
                 var myChart = new Chart(ctx, {
                     type: 'bar',
@@ -257,14 +300,14 @@
                                 borderColor: 'red',
                                 borderWidth: 2
                             },
-                            ]
+                        ]
                     },
                     options: {
                         scales: {
                             yAxes: [{
                                 ticks: {
                                     beginAtZero: true,
-                                    min:0,
+                                    min: 0,
                                 }
                             }],
                             xAxes: [{
@@ -277,8 +320,8 @@
                         tooltips: {
                             mode: 'index',
                             //position: 'cursor',
-                            intersect:false,
-                            
+                            intersect: false,
+
                         }
                     }
                 });
@@ -302,6 +345,10 @@
                 document.getElementById('archivo').innerHTML = datos['archivo'];
 
                 var ctx = document.getElementById('chartFis').getContext('2d');
+
+                document.getElementById("container-fis").innerHTML = '&nbsp;';
+                document.getElementById("container-fis").innerHTML = '<canvas id="chartFis" style="height:100px;width:200px;"></canvas>';
+                var ctx = document.getElementById("chartFis").getContext("2d");
 
                 if (ctx != null) {
                     ctx.innerHTML = "";

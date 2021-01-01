@@ -26,14 +26,25 @@
 
 
 }
+<div class="row">
+    <div class="col-12">
+        <em>Seleccione una fecha inicial y una fecha inicial para realizar las busquedas deseadas.</em>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-12">
+        <h4 class="text-muted text-center">Denuncias @fiscalia<br /><small id="f" class="text-center"></small></h4>
+    </div>
+</div>
 
 <form method="get" asp-area="" asp-controller="FE" asp-action="Chart">
     <div class="row">
         <div class="col-12 col-md">
-            <input name="fecha" class="form-control" type="date" />
+            <input name="fecha" class="form-control max-today" type="date" />
         </div>
         <div class="col-12 col-md">
-            <input name="fecha2" class="form-control" type="date" />
+            <input name="fecha2" class="form-control max-today" type="date" />
         </div>
         <div class="col-lg-1 col-md">
             <button type="submit" class="btn btn-outline-dark form-control"><i class="fa fa-search"></i></button>
@@ -43,13 +54,20 @@
 <div id="alerta"></div>
 <hr />
 
-<div class="row">
-    <div class="col-12">
-        <h4 class="text-muted text-center">Denuncias @fiscalia <small id="f" class="text-center"></small></h4>
-    </div>
-</div>
+
 
 <div class="container-fluid">
+    <div class="row text-muted text-center border border-primary rounded-pill">
+        <div class="col-12 col-md">
+            <i><b>CDI: <span id="cdi"></span></b></i>
+        </div>
+        <div class="col-12 col-md">
+            <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
+        </div>
+        <div class="col-12 col-md">
+            <i><b>Archivo: <span id="archivo"></span></b></i>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-12 col-md-6 col-lg-8 col-sm-12">
             <fieldset class="tablaDatos">
@@ -73,7 +91,7 @@
                 <legend class="tituloDatos">Información por MP</legend>
                 <div class="row">
                     <div class="col-12">
-                        <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica <span id="fechaAmp2"></span> al <span id="fechaAmp"></span></h6>
+                        <h6 class="border border-primary text-center rounded-pill text-muted">Estadistica <span id="fechaAmp2"></span> hasta el <span id="fechaAmp"></span></h6>
                     </div>
                 </div>
                 <div class="row">
@@ -92,18 +110,6 @@
                     <canvas id="myChart" style="width: 200px; height: 400px;"></canvas>
                 </div>
             </fieldset>
-        </div>
-    </div>
-
-    <div class="row text-muted text-center border border-primary rounded-pill">
-        <div class="col-12 col-md">
-            <i><b>CDI: <span id="cdi"></span></b></i>
-        </div>
-        <div class="col-12 col-md">
-            <i><b>Constancia de hechos: <span id="constancia"></span></b></i>
-        </div>
-        <div class="col-12 col-md">
-            <i><b>Archivo: <span id="archivo"></span></b></i>
         </div>
     </div>
 </div>
@@ -128,6 +134,90 @@
                 document.getElementById('alerta').innerHTML = '<div class="row"><span class="col-12 alert alert-danger text-center">No selecciono la primer fecha</span></div>';
             }
         }
+
+        //chart de NOMBRE mp con el numero de denuncias sin atender [Fiscalia Metropolitana]
+        $.ajax({
+            type: "GET",
+            url: "FE/ChartMP",
+            beforeSend: function () {
+                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
+            },
+            success: function (response) {
+                console.log(response);
+                var data = response;
+                var nombre = new Array();
+                var sinAtencion = new Array();
+                var atendidas = new Array();
+                var total = 0;
+
+                var totalSinA = 0;
+
+                for (var i = 0; i < data.length; i++) {
+                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
+
+                    if (data[i]['stock'] - data[i]['resuelto'] < 0)
+                        totalSinA = 0;
+                    else
+                        totalSinA = data[i]['stock'] - data[i]['resuelto'];
+
+                    sinAtencion.push(totalSinA);
+                    total = total + (totalSinA);
+                    atendidas.push(data[i]['resuelto']);
+                }
+
+                document.getElementById('tn1').innerHTML = total;
+
+                var ctx = document.getElementById('chartMP').getContext('2d');
+
+                if (ctx != null) {
+                    ctx.innerHTML = "";
+                }
+
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: nombre,
+                        datasets: [{
+                            label: 'Atendidas',
+                            data: atendidas,
+                            backgroundColor: 'rgb(255, 215, 0)',//'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'yellow',
+                            borderWidth: 2
+                        }, {
+                            label: 'Sin Atender',
+                            data: sinAtencion,
+                            backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'red',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    min: 0,
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 7
+                                }
+                            }]
+                        },
+                        responsive: true,
+                        tooltips: {
+                            mode: 'index',
+                            //position: 'cursor',
+                            intersect: false,
+
+                        }
+                    }
+                });
+
+            }
+
+        });
 
         mostrarGrafica();
         function mostrarGrafica() {
@@ -207,81 +297,6 @@
                         options: chartOptions
                     });
                 }
-            });
-
-            //chart de NOMBRE mp con el numero de denuncias sin atender [Fiscalia Metropolitana]
-            $.ajax({
-                type: "GET",
-                url: "FE/ChartMP",
-                beforeSend: function () {
-                    $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
-                },
-                success: function (response) {
-                    var data = response;
-                    var nombre = new Array();
-                    var sinAtencion = new Array();
-                    var atendidas = new Array();
-                    var total = 0;
-
-                    for (var i = 0; i < data.length; i++) {
-                        nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-                        sinAtencion.push(data[i]['stock'] - data[i]['resuelto']);
-                        total = total + (data[i]['stock'] - data[i]['resuelto']);
-                        atendidas.push(data[i]['resuelto']);
-                    }
-
-                    document.getElementById('tn1').innerHTML = total;
-
-                    var ctx = document.getElementById('chartMP').getContext('2d');
-
-                    if (ctx != null) {
-                        ctx.innerHTML = "";
-                    }
-
-                    var myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: nombre,
-                            datasets: [{
-                                label: 'Atendidas',
-                                data: atendidas,
-                                backgroundColor: 'rgb(255, 215, 0)',//'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'yellow',
-                                borderWidth: 2
-                            },{
-                                label: 'Sin Atender',
-                                data: sinAtencion,
-                                backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'red',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true,
-                                        min: 0,
-                                    }
-                                }],
-                                xAxes: [{
-                                    ticks: {
-                                        fontSize: 7
-                                    }
-                                }]
-                            },
-                            responsive: true,
-                            tooltips: {
-                                mode: 'index',
-                                //position: 'cursor',
-                                intersect: false,
-
-                            }
-                        }
-                    });
-
-                }
-
             });
 
             //Cantidad de denuncias RECIBIDAS por fiscalia PASTEL

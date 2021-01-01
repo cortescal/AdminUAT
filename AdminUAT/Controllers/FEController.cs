@@ -449,10 +449,10 @@ namespace AdminUAT.Controllers
         }
 
         [HttpGet("FE/ChartMP")]
-        public async Task<IEnumerable<MP>> ChartMP()
+        public async Task<IEnumerable<MPData>> ChartMP()
         {
             var userId = _userManager.GetUserId(User);
-            var json = new List<MP>();
+            var json = new List<MPData>();
 
             //Esta logueado como root
             if (User.IsInRole("FiscMet"))
@@ -460,8 +460,16 @@ namespace AdminUAT.Controllers
                 var rolFis = await _context.Fiscalias.Where(x => x.Value == "FI").Select(x => x.Id).FirstOrDefaultAsync();
 
                 json = await _context.MP.AsNoTracking()
-                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis&&x.URId==6)
-                    .OrderByDescending(x => (x.Stock - x.Resuelto))
+                    .Include(x=>x.UR)
+                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis&&x.UR.RegionId==6)
+                    .Select(x => new MPData
+                    {
+                        Nombre = x.Nombre,
+                        PrimerApellido = x.PrimerApellido,
+                        Stock = x.Stock,
+                        Resuelto = x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
                     .ToListAsync();
 
                 return json;
@@ -471,8 +479,16 @@ namespace AdminUAT.Controllers
                 var rolFis = await _context.Fiscalias.Where(x => x.Value == "FI").Select(x => x.Id).FirstOrDefaultAsync();
 
                 json = await _context.MP.AsNoTracking()
-                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis && x.UR.RegionId != 6&&x.URId!=6)
-                    .OrderByDescending(x => (x.Stock - x.Resuelto))
+                    .Include(x=>x.UR)
+                    .Where(x => x.Activo == true && x.FiscaliaId == rolFis && x.UR.RegionId != 6)
+                    .Select(x => new MPData
+                    {
+                        Nombre = x.Nombre,
+                        PrimerApellido = x.PrimerApellido,
+                        Stock = x.Stock,
+                        Resuelto = x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
                     .ToListAsync();
 
                 return json;
@@ -484,7 +500,14 @@ namespace AdminUAT.Controllers
 
                 json = await _context.MP.AsNoTracking()
                     .Where(x => x.Activo == true && x.FiscaliaId == rolFis)
-                    .OrderByDescending(x => (x.Stock - x.Resuelto))
+                    .Select(x => new MPData
+                    {
+                        Nombre = x.Nombre,
+                        PrimerApellido = x.PrimerApellido,
+                        Stock = x.Stock,
+                        Resuelto = x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
                     .ToListAsync();
 
                 return json;
@@ -493,35 +516,57 @@ namespace AdminUAT.Controllers
         }
 
         [HttpGet("FE/ChartMPRoot")]
-        public async Task<IEnumerable<MP>> ChartMPRoot(Guid fiscalia)
+        public async Task<IEnumerable<MPData>> ChartMPRoot(Guid fiscalia)
         {
             var userId = _userManager.GetUserId(User);
-            var json = new List<MP>();
+            var json = new List<MPData>();
 
             if (fiscalia == Guid.Parse("bd1cb705-e3c3-48a3-b06f-9d39e19948c6"))
             {
                 fiscalia = await _context.Fiscalias.Where(x => x.Value == "FI").Select(x => x.Id).FirstOrDefaultAsync();
 
                 json = await _context.MP.AsNoTracking()
-                .Where(x => x.Activo == true && x.FiscaliaId == fiscalia && x.URId==6)
-                .OrderByDescending(x => (x.Stock - x.Resuelto))
-                .ToListAsync();
+                    .Include(x=>x.UR)
+                    .Where(x => x.Activo == true && x.FiscaliaId == fiscalia && x.UR.RegionId == 6)
+                    .Select(x=>new MPData{
+                        Nombre=x.Nombre,
+                        PrimerApellido=x.PrimerApellido,
+                        Stock=x.Stock,
+                        Resuelto=x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
+                    .ToListAsync();
             }
             if (fiscalia == Guid.Parse("81abc9b3-423b-4676-9528-6181f5e6b651"))
             {
                 fiscalia = await _context.Fiscalias.Where(x => x.Value == "FI").Select(x => x.Id).FirstOrDefaultAsync();
 
                 json = await _context.MP.AsNoTracking()
-                .Where(x => x.Activo == true && x.FiscaliaId == fiscalia && x.URId != 6)
-                .OrderByDescending(x => (x.Stock - x.Resuelto))
-                .ToListAsync();
+                    .Include(x => x.UR)
+                    .Where(x => x.Activo == true && x.FiscaliaId == fiscalia && x.UR.RegionId != 6)
+                    .Select(x => new MPData
+                    {
+                        Nombre = x.Nombre,
+                        PrimerApellido = x.PrimerApellido,
+                        Stock = x.Stock,
+                        Resuelto = x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
+                    .ToListAsync();
             }
             else
             {
                 json = await _context.MP.AsNoTracking()
-                .Where(x => x.Activo == true && x.FiscaliaId == fiscalia)
-                .OrderByDescending(x => (x.Stock - x.Resuelto))
-                .ToListAsync();
+                    .Where(x => x.Activo == true && x.FiscaliaId == fiscalia)
+                    .Select(x => new MPData
+                    {
+                        Nombre = x.Nombre,
+                        PrimerApellido = x.PrimerApellido,
+                        Stock = x.Stock,
+                        Resuelto = x.Resuelto
+                    })
+                    .OrderByDescending(x => x.Resuelto)
+                    .ToListAsync();
             }
 
             return json;

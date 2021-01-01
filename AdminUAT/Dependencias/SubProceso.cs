@@ -139,12 +139,34 @@ namespace AdminUAT.Dependencias
             return false;
         }
 
-        public long IdRegionDenuncia(long denunciaId)
+        public bool AccesoDenunciaFE(long denunciaId, Guid fiscalia)
         {
             var denuncia = _uatContext.Denuncia
                 .Include(x => x.MP)
                     .ThenInclude(x => x.UR)
-                .Where(x => x.Id == denunciaId && x.Paso == 3)
+                .Where(x => x.Id == denunciaId && x.Paso == 3 && x.FiscaliaId == fiscalia)
+                .FirstOrDefault();
+
+            if(denuncia==null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public long IdRegionDenuncia(long denunciaId)
+        {
+            var fiscalia = _uatContext.Fiscalias
+                .Where(x => x.Value == "FI")
+                .Select(x=>x.Id).FirstOrDefault();
+
+            var denuncia = _uatContext.Denuncia
+                .Include(x => x.MP)
+                    .ThenInclude(x => x.UR)
+                .Where(x => x.Id == denunciaId && x.Paso == 3 && x.FiscaliaId==fiscalia)
                 .FirstOrDefault();
 
             if (denuncia == null)
@@ -154,5 +176,7 @@ namespace AdminUAT.Dependencias
 
             return denuncia.MP.UR.RegionId;
         }
+
+        
     }
 }
