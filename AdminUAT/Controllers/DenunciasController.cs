@@ -449,13 +449,13 @@ namespace AdminUAT.Controllers
             string msj = "";
             if (paso==1)
             {
-                titulo = "UAT@ - CONFIRMACIÓN DE CORREO ELECTRÓNICO";
+                titulo = "Denuncia en Línea - CONFIRMACIÓN DE CORREO ELECTRÓNICO";
                 msj= $"{Request.Scheme}://fiscalia.puebla.gob.mx:8099/";
             }
             else if(paso==3)
             {
                 var idMP = await _context.Denuncia.Where(x => x.Id == id).Select(x => x.MPId).FirstOrDefaultAsync();
-                titulo = "UAT@ - AVISO DE RECEPCIÓN DE DENUNCIA";
+                titulo = "Denuncia en Línea - AVISO DE RECEPCIÓN DE DENUNCIA";
 
                 if (idMP > 0)
                 {
