@@ -71,7 +71,8 @@ namespace AdminUAT.Controllers
         public async Task<IActionResult> ResetPass(string id)
         {
             var us = await _context.Users.FindAsync(id);
-            us.PasswordHash = "AQAAAAEAACcQAAAAEEqiXmHSifLHdntCN+O0yJ9+TBzEynBiENVzz4v2zuOko0AIhtwjPn6E4QEMnAqVMg==";
+            us.PasswordHash = _userManager.PasswordHasher.HashPassword(us,"Uat@.2021*");
+
             _context.Update(us);
             await _context.SaveChangesAsync();
             return Redirect("~/Usuarios");

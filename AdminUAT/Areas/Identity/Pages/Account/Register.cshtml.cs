@@ -139,7 +139,7 @@ namespace AdminUAT.Areas.Identity.Pages.Account
                     user.MatchMP = 0;
                 }
 
-                var result = await _userManager.CreateAsync(user, "Uat@.2019*");
+                var result = await _userManager.CreateAsync(user, "Uat@.2021*");
 
                 if (result.Succeeded)
                 {
