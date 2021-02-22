@@ -153,6 +153,93 @@
         }
     }
 
+    //chart de NOMBRE mp con el numero de denuncias sin atender
+    $.ajax({
+        type: "GET",
+        url: "FE/ChartMPRoot?fiscalia=" + fiscalia,
+        beforeSend: function () {
+            $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
+        },
+        success: function (response) {
+
+            console.log(response);
+
+            var data = response;
+            var nombre = new Array();
+            var sinAtencion = new Array();
+            var atendidas = new Array();
+            var total = 0;
+
+            var totalSinA = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
+
+                if (data[i]['stock'] - data[i]['resuelto'] < 0)
+                    totalSinA = 0;
+                else
+                    totalSinA = data[i]['stock'] - data[i]['resuelto'];
+
+                sinAtencion.push(totalSinA);
+                total = total + (totalSinA);
+                atendidas.push(data[i]['resuelto']);
+            }
+
+            document.getElementById('tn1').innerHTML = total;
+
+            var ctx = document.getElementById('chartMP').getContext('2d');
+
+            document.getElementById("container-mp").innerHTML = '&nbsp;';
+            document.getElementById("container-mp").innerHTML = '<canvas id="chartMP" style="height:100px;width:180px;"></canvas>';
+            var ctx = document.getElementById("chartMP").getContext("2d");
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: nombre,
+                    datasets: [
+                        {
+                            label: 'Atendidas',
+                            data: atendidas,
+                            backgroundColor: 'rgb(255, 215, 0)',//'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'yellow',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Sin Atender',
+                            data: sinAtencion,
+                            backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'red',
+                            borderWidth: 2
+                        },
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                min: 0,
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontSize: 7
+                            }
+                        }]
+                    },
+                    responsive: true,
+                    tooltips: {
+                        mode: 'index',
+                        //position: 'cursor',
+                        intersect: false,
+
+                    }
+                }
+            });
+        }
+    });
+
     mostrarGrafica();
 
     function mostrarGrafica() {
@@ -239,94 +326,7 @@
                     options: chartOptions
                 });
             }
-        });
-
-        //chart de NOMBRE mp con el numero de denuncias sin atender
-        $.ajax({
-            type: "GET",
-            url: "FE/ChartMPRoot?fiscalia=" + fiscalia,
-            beforeSend: function () {
-                $("#chartMP").html('<div class="text-center"><img src="../images/loading.gif" alt="" /></div>');
-            },
-            success: function (response) {
-
-                console.log(response);
-
-                var data = response;
-                var nombre = new Array();
-                var sinAtencion = new Array();
-                var atendidas = new Array();
-                var total = 0;
-
-                var totalSinA = 0;
-
-                for (var i = 0; i < data.length; i++) {
-                    nombre.push(data[i]['nombre'].toUpperCase() + " " + data[i]['primerApellido'].toUpperCase());
-
-                    if (data[i]['stock'] - data[i]['resuelto'] < 0)
-                        totalSinA = 0;
-                    else
-                        totalSinA = data[i]['stock'] - data[i]['resuelto'];
-
-                    sinAtencion.push(totalSinA);
-                    total = total + (totalSinA);
-                    atendidas.push(data[i]['resuelto']);
-                }
-
-                document.getElementById('tn1').innerHTML = total;
-
-                var ctx = document.getElementById('chartMP').getContext('2d');
-
-                document.getElementById("container-mp").innerHTML = '&nbsp;';
-                document.getElementById("container-mp").innerHTML = '<canvas id="chartMP" style="height:100px;width:180px;"></canvas>';
-                var ctx = document.getElementById("chartMP").getContext("2d");
-
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: nombre,
-                        datasets: [
-                            {
-                                label: 'Atendidas',
-                                data: atendidas,
-                                backgroundColor: 'rgb(255, 215, 0)',//'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'yellow',
-                                borderWidth: 2
-                            },
-                            {
-                                label: 'Sin Atender',
-                                data: sinAtencion,
-                                backgroundColor: 'rgba(231, 0, 0, 0.3)',//'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'red',
-                                borderWidth: 2
-                            },
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true,
-                                    min: 0,
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontSize: 7
-                                }
-                            }]
-                        },
-                        responsive: true,
-                        tooltips: {
-                            mode: 'index',
-                            //position: 'cursor',
-                            intersect: false,
-
-                        }
-                    }
-                });
-            }
-        });
+        }); 
 
         //Cantidad de denuncias RECIBIDAS por fiscalia PASTEL
         $.ajax({

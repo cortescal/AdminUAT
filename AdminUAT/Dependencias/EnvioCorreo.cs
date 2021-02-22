@@ -133,7 +133,7 @@ namespace AdminUAT.Dependencias
             var denuncia = _context.Denuncia.Find(idDenuncia);
             /*builder.HtmlBody*/
             builder = string.Format(
-@"<center><b>Fiscalía General del Estado de Puebla</b></center>
+                @"<center><b>Fiscalía General del Estado de Puebla</b></center>
                 <p>Estimado <b>{0}:</b></p>
                 <p>¡Has concluido con la presentación de tu denuncia!</p>
                 <p>Folio: <b>{1}</b></p>

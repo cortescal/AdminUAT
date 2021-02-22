@@ -417,13 +417,13 @@ namespace AdminUAT.Controllers
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
                 */
-                email.From = new MailAddress("uat.fiscalia.puebla.7@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.9@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.7@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.9@gmail.com", "FgeUat.2021**");
 
                 smtp.Send(email);
                 email.Dispose();
@@ -463,13 +463,13 @@ namespace AdminUAT.Controllers
                 smtp.Port = 25;
                 smtp.EnableSsl = true;
                 */
-                email.From = new MailAddress("uat.fiscalia.puebla.8@gmail.com");
+                email.From = new MailAddress("uat.fiscalia.puebla.10@gmail.com");
                 smtp.Host = "smtp.gmail.com";
                 smtp.Port = 587;
                 smtp.EnableSsl = true;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.8@gmail.com", "Fge.2020**");
+                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.10@gmail.com", "FgeUat.2021**");
                 smtp.Send(email);
                 email.Dispose();
             }
@@ -501,7 +501,24 @@ namespace AdminUAT.Controllers
                     .Where(x => x.Id == idMP)
                     .FirstOrDefaultAsync();
 
-                    msj = $"<b>Lic. {mp.Nombre} {mp.PrimerApellido} {mp.SegundoApellido}, Agente del Ministerio Público</b>, adscrito a la Fiscalía de Investigación {mp.UR.Region.Nombre}." +
+                    var fiscalia = await _context.Fiscalias.AsNoTracking()
+                    .Where(x => x.Id == mp.FiscaliaId)
+                    .FirstOrDefaultAsync();
+                    var fiscaliaName = "";
+
+                    if (fiscalia.Id == Guid.Parse("24C3DA6D-90C8-415E-8D0A-0C89D5147C22"))
+                    {
+                        if (mp.UR.Region.Id == 6)
+                            fiscaliaName = "Fiscalía de Investigación Metropolitana";
+                        else
+                            fiscaliaName = "Fiscalía de Investigación Regional";
+                    }
+                    else
+                    {
+                        fiscaliaName = fiscalia.Name;
+                    }
+
+                    msj = $"<b>Lic. {mp.Nombre} {mp.PrimerApellido} {mp.SegundoApellido}, Agente del Ministerio Público</b>, adscrito a la Fiscalía de Investigación {fiscaliaName}." +
                         $"<p><b>Datos de contacto</b></p>" +
                         $"<p>{mp.UR.Nota}</p>";
                 }   
