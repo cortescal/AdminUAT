@@ -1,5 +1,6 @@
 ﻿using AdminUAT.Data;
 using AdminUAT.Dependencias;
+using AdminUAT.Dependencias.EmailModel;
 using AdminUAT.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -63,6 +64,8 @@ namespace AdminUAT
             services.AddTransient<ISubProceso, SubProceso>();
             services.AddTransient<IQueryDenuncias, QueryDenuncias>();
             services.AddTransient<IEnvioCorreo, EnvioCorreo>();
+
+            services.Configure<EmailSenderOptions>(Configuration.GetSection("EmailSenderOptions"));
 
             services.ConfigureApplicationCookie(options =>
             {

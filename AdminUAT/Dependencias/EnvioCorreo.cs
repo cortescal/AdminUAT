@@ -1,4 +1,6 @@
 ﻿using AdminUAT.Data;
+using AdminUAT.Dependencias.EmailModel;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +16,43 @@ namespace AdminUAT.Dependencias
         private string builder;
         private readonly NewUatDbContext _context;
 
-        public EnvioCorreo(NewUatDbContext context)
+        private SmtpClient Cliente { get; }
+        private SmtpClient Cliente2 { get; }
+        private SmtpClient ClienteFiscalia { get; }
+        private EmailSenderOptions Options { get; }
+
+        public EnvioCorreo(NewUatDbContext context, IOptions<EmailSenderOptions> options)
         {
             _context = context;
+
+            Options = options.Value;
+            Cliente = new SmtpClient()
+            {
+                Host = Options.Host,
+                Port = Options.Port,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(Options.Email, Options.Password),
+                EnableSsl = Options.EnableSsl,
+            };
+            Cliente2 = new SmtpClient()
+            {
+                Host = Options.Host,
+                Port = Options.Port,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(Options.Email2, Options.Password),
+                EnableSsl = Options.EnableSsl,
+            };
+            ClienteFiscalia = new SmtpClient()
+            {
+                Host = Options.HostFiscalia,
+                Port = Options.PortFiscalia,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(Options.EmailFiscalia, Options.PasswordFiscalia),
+                EnableSsl = Options.EnableSslFiscalia,
+            };
         }
 
         public bool SendCorreo(string titulo, int paso, long idDenuncia, string path)
@@ -25,65 +61,25 @@ namespace AdminUAT.Dependencias
                 .Where(x => x.DenunciaId == idDenuncia && x.Email != "")
                 .FirstOrDefault();
 
-            MailMessage email = new MailMessage();
-
             var emailAddress = denunciante.Email;
-
-            email.To.Add(new MailAddress(denunciante.Email));
-            email.Subject = titulo;
-
 
             string name = denunciante.Nombre + " " + denunciante.PrimerApellido + " " + denunciante.SegundoApellido;
             if (paso == 1) { ConstruirBody(name, idDenuncia, path); }
-            else if (paso == 3) { ConstruirBodyMailFinal(name, idDenuncia, path); }
-            email.Body = builder;
-            email.IsBodyHtml = true;
-            email.Priority = MailPriority.Normal;
-            SmtpClient smtp = new SmtpClient();
+            else if (paso == 3) { ConstruirBodyMailFinal(name, idDenuncia, path); }     
 
             try
             {
-                /*
-                email.From = new MailAddress("uat.fiscalia.puebla.3@outlook.com");
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.3@outlook.com", "Fge.2020**", "outlook.com");
-                smtp.Host = "smtp-mail.outlook.com";
-                smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
-                smtp.Port = 25;
-                smtp.EnableSsl = true;
-                */
-                email.From = new MailAddress("uat.fiscalia.puebla.9@gmail.com");
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = true;
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.9@gmail.com", "FgeUat.2021**");
-
-                smtp.Send(email);
-                email.Dispose();
+                var email = new MailMessage(Options.Email,emailAddress,titulo,builder);
+                email.IsBodyHtml = true;
+                email.Priority = MailPriority.Normal;
+                Cliente.SendMailAsync(email);
             }
-            catch (Exception ex)
+            catch
             {
-                /*
-                email.From = new MailAddress("uat.fiscalia.puebla.1@outlook.com");
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.1@outlook.com", "Fge.2020**", "outlook.com");
-                smtp.Host = "smtp-mail.outlook.com";
-                smtp.TargetName = "STARTTLS/smtp-mail.outlook.com";
-                smtp.Port = 25;
-                smtp.EnableSsl = true;
-                */
-                email.From = new MailAddress("uat.fiscalia.puebla.10@gmail.com");
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.EnableSsl = true;
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("uat.fiscalia.puebla.10@gmail.com", "FgeUat.2021**");
-
-                smtp.Send(email);
-                email.Dispose();
+                var email = new MailMessage(Options.Email2, emailAddress, titulo, builder);
+                email.IsBodyHtml = true;
+                email.Priority = MailPriority.Normal;
+                Cliente.SendMailAsync(email);
             }
 
             return true;

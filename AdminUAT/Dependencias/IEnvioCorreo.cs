@@ -9,5 +9,6 @@ namespace AdminUAT.Dependencias
     {
         bool SendCorreo(string titulo, int paso, long idDenuncia, string path);
         string GeneraCodigo(long idDenuncia);
+        Task SendEmailTokenAsync();
     }
 }
